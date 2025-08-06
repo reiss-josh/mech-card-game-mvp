@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://bykf1i1gkcl8w"]
+
+[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://MyTheme.tres" id="1_e7j3a"]
+
+[node name="CardHud" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EnergyContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="EnergyTip" type="Label" parent="EnergyContainer"]
+layout_mode = 2
+theme = ExtResource("1_e7j3a")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Current Energy:"
+
+[node name="EnergyValue" type="Label" parent="EnergyContainer"]
+layout_mode = 2
+theme = ExtResource("1_e7j3a")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "0"

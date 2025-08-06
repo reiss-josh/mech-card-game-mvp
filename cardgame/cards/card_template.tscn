@@ -1,0 +1,77 @@
+[gd_scene load_steps=3 format=3 uid="uid://8tk27chelhf0"]
+
+[ext_resource type="Texture2D" uid="uid://b8187sy51w1vo" path="res://cardgame/art/basic_card.png" id="1_h4h4f"]
+[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://MyTheme.tres" id="2_ahfly"]
+
+[node name="CardTemplate" type="Control"]
+custom_minimum_size = Vector2(750, 1050)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1170.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_h4h4f")
+
+[node name="HeaderMargin" type="MarginContainer" parent="Background"]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 34.0
+offset_right = 716.0
+offset_bottom = 102.0
+theme = ExtResource("2_ahfly")
+
+[node name="HeaderText" type="HBoxContainer" parent="Background/HeaderMargin"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Background/HeaderMargin/HeaderText"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme = ExtResource("2_ahfly")
+text = "Card Name"
+vertical_alignment = 1
+
+[node name="Cost" type="Label" parent="Background/HeaderMargin/HeaderText"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme = ExtResource("2_ahfly")
+text = "Cost"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BodyMargin" type="MarginContainer" parent="Background"]
+layout_mode = 2
+offset_left = 36.0
+offset_top = 108.0
+offset_right = 712.0
+offset_bottom = 1016.0
+theme = ExtResource("2_ahfly")
+
+[node name="Body" type="VBoxContainer" parent="Background/BodyMargin"]
+layout_mode = 2
+
+[node name="CardBody" type="Label" parent="Background/BodyMargin/Body"]
+layout_mode = 2
+size_flags_vertical = 1
+theme = ExtResource("2_ahfly")
+theme_override_font_sizes/font_size = 50
+text = "Cardbody"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CardType" type="Label" parent="Background/BodyMargin/Body"]
+layout_mode = 2
+theme = ExtResource("2_ahfly")
+text = "CardType"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://blcbjhhbhiy0m"]
+
+[ext_resource type="Script" uid="uid://b2md22fdsgke1" path="res://cardgame/cards/card_2D.gd" id="1_xoe0k"]
+[ext_resource type="PackedScene" uid="uid://8tk27chelhf0" path="res://cardgame/cards/card_template.tscn" id="2_43yx8"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_lrawq"]
+viewport_path = NodePath("CardViewport")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qev3v"]
+size = Vector2(750, 1050)
+
+[node name="Card2D" type="Node2D"]
+scale = Vector2(0.3, 0.3)
+script = ExtResource("1_xoe0k")
+
+[node name="CardCollisionArea" type="Area2D" parent="."]
+
+[node name="CardSprite" type="Sprite2D" parent="CardCollisionArea"]
+texture = SubResource("ViewportTexture_lrawq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CardCollisionArea"]
+shape = SubResource("RectangleShape2D_qev3v")
+
+[node name="CardViewport" type="SubViewport" parent="."]
+size = Vector2i(750, 1050)
+size_2d_override = Vector2i(750, 1050)
+
+[node name="CardTemplate" parent="CardViewport" instance=ExtResource("2_43yx8")]
+offset_right = 0.0
+offset_bottom = 0.0

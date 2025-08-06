@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://cfr2k0yo6bw5k"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_fjvy0"]
+
+[resource]
+script = ExtResource("1_fjvy0")
+card_name = "Basic Move"
+card_cost = 3
+card_type = "Move"
+card_body = "Perform Basic Move"
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://pu7pxu6txe78"]
+
+[ext_resource type="Script" uid="uid://bgdu2q2vfv31p" path="res://cardgame/cards/old/card.gd" id="1_yny21"]
+[ext_resource type="PackedScene" uid="uid://8tk27chelhf0" path="res://cardgame/cards/card_template.tscn" id="2_trobf"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_twxyb"]
+viewport_path = NodePath("Front/SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qha8t"]
+resource_local_to_scene = true
+albedo_texture = SubResource("ViewportTexture_twxyb")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_qha8t"]
+material = SubResource("StandardMaterial3D_qha8t")
+size = Vector2(1, 1.4)
+orientation = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_anbmp"]
+albedo_color = Color(0.122252, 0.122252, 0.122252, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_feckb"]
+material = SubResource("StandardMaterial3D_anbmp")
+size = Vector2(1, 1.4)
+orientation = 0
+
+[node name="Card" type="Node3D"]
+script = ExtResource("1_yny21")
+
+[node name="Front" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_qha8t")
+
+[node name="SubViewport" type="SubViewport" parent="Front"]
+size = Vector2i(750, 1050)
+size_2d_override = Vector2i(512, 512)
+
+[node name="CardTemplate" parent="Front/SubViewport" instance=ExtResource("2_trobf")]
+offset_right = 238.0
+offset_bottom = 538.0
+
+[node name="Back" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+mesh = SubResource("PlaneMesh_feckb")

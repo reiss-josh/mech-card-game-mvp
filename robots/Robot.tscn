@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bhs1c5cx8gnib"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ll72f"]
+albedo_color = Color(1, 0.419386, 0.474944, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_s1te5"]
+material = SubResource("StandardMaterial3D_ll72f")
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ll72f"]
+
+[node name="Robot" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_s1te5")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("CapsuleShape3D_ll72f")
