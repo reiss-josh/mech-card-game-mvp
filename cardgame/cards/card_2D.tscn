@@ -24,6 +24,7 @@ shape = SubResource("RectangleShape2D_qev3v")
 [node name="CardViewport" type="SubViewport" parent="."]
 size = Vector2i(750, 1050)
 size_2d_override = Vector2i(750, 1050)
+render_target_update_mode = 1
 
 [node name="CardTemplate" parent="CardViewport" instance=ExtResource("2_43yx8")]
 offset_right = 0.0

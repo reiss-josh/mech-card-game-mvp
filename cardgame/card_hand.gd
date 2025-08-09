@@ -5,7 +5,7 @@ var card_array := []
 var card_buffer = 100
 var card_interaction_queue := []
 var hand_is_interactable := true
-signal card_selected(card, card_index)
+signal card_selected(card)
 
 func _ready():
 	hand_is_interactable = true
@@ -23,22 +23,26 @@ func draw_card(data):
 	card.data = data
 	add_child(card)
 	card_array.append(card)
-	card.get_node("CardCollisionArea").input_event.connect(_on_card_area_2d_input_event.bind(card, card_array.size()-1))
+	card.last_hand_position = card_array.size()+1
+	card.get_node("CardCollisionArea").input_event.connect(_on_card_area_2d_input_event.bind(card))
 	rearrange_cards()
 
 #place card in hand at index
-func place_card_in_hand(card, card_index):
+func place_card_in_hand(card):
 	#add_child(card) #TODO: should this be here?
-	card_array.insert(card_index,card)
-	card.get_node("CardCollisionArea").input_event.connect(_on_card_area_2d_input_event.bind(card, card_index))
+	if(card.last_hand_position == null):
+		card.last_hand_posiion = card_array.size()+1
+	card_array.insert(card.last_hand_position,card)
+	card.get_node("CardCollisionArea").input_event.connect(_on_card_area_2d_input_event.bind(card))
 	rearrange_cards()
 
 #remove card from hand at index
-func play_card_from_hand(card, card_index):
-	card_array.remove_at(card_index)
+func play_card_from_hand(card):
+	card.last_hand_position = card_array.find(card)
+	card_array.remove_at(card.last_hand_position)
 	rearrange_cards()
 	card.get_node("CardCollisionArea").input_event.disconnect(_on_card_area_2d_input_event)
-	card_selected.emit(card, card_index)
+	card_selected.emit(card)
 
 #rearranges cards on the screen
 func rearrange_cards():
@@ -54,28 +58,28 @@ func rearrange_cards():
 		curr_card.position.x = (dist_from_center * card_buffer) #offset card position onscreen
 
 #gets input events from clicked cards and queues them
-func _on_card_area_2d_input_event(_viewport, event, _shape_idx, card, cardindex):
+func _on_card_area_2d_input_event(_viewport, event, _shape_idx, card):
 	if(hand_is_interactable):
-		card_interaction_queue.append({"Card": card, "CardIndex": cardindex, "Event": event}) #queue a card click
+		card_interaction_queue.append({"Card": card, "Event": event}) #queue a card click
 	
 #determines which clicked card is highest up in stack
 func resolve_card_interaction_queue():
 	#find the highest-indexed card
-	var running_highest_card = {"Card": null, "CardIndex": -1, "Event": null}
+	var running_highest_card_index = -1
+	var running_highest_card = null
 	for queue_index in card_interaction_queue.size():
-		if card_interaction_queue[queue_index]["CardIndex"] > running_highest_card["CardIndex"]:
+		if card_interaction_queue[queue_index]["Card"].last_hand_position > running_highest_card_index:
 			running_highest_card = card_interaction_queue[queue_index]
 	card_interaction_queue.clear()
 	#print(running_highest_card["Card"].debug_name,running_highest_card["CardIndex"])
 	
 	#handle interaction
 	var card = running_highest_card["Card"]
-	var card_index = running_highest_card["CardIndex"]
 	var event = running_highest_card["Event"]
 	#handle mouse-click on card
 	if event is InputEventMouseButton and event.pressed:
 		hand_is_interactable = false
-		play_card_from_hand(card, card_index)
+		play_card_from_hand(card)
 		print("clicked ", card.debug_name)
 	#TODO: highlighting cards
 	#if event is InputEventMouseMotion:

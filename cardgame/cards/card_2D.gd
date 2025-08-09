@@ -5,7 +5,7 @@ class_name Card2D
 var child_dict := {}
 var debug_name = ""
 
-var hand_position := 0
+var last_hand_position = null
 #signal area_2d_input_event(event, shape_idx)
 
 #manage cardData structure
