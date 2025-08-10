@@ -21,12 +21,13 @@ func _process(_delta):
 #move card into selection area
 func _card_selected(card):
 	card.reparent(self)
-	card.position = Vector2.ZERO
+	#card.position = Vector2.ZERO
+	card.move_to(Vector2.ZERO)
 	card_held = card
 	card_held_index = card.last_hand_position
 	
 func return_card_to_hand(card):
 	card.reparent($CardHand)
-	card.position = Vector2.ZERO
+	#card.position = Vector2.ZERO
 	$CardHand.place_card_in_hand(card)
 	$CardHand.hand_is_interactable = true
