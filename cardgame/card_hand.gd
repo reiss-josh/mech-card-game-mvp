@@ -4,7 +4,7 @@ extends Node2D
 ## Any card_2D objects passed in must be preloaded with card_data
 
 var card_array := [] ## array of cards in hand
-var card_buffer = 100 ## distance cards should be apart from eachother in hand (in pixels)
+var card_buffer = Vector2(500,40) ## distance cards should be apart from eachother in hand (in pixels)
 var card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
 
 
@@ -23,9 +23,6 @@ func _ready():
 func _process(_delta):
 	if card_interaction_queued_event != null: #check and resolve card queue
 		resolve_card_interaction_queue.call_deferred(card_array[card_interaction_queued_hand_position], card_interaction_queued_event)
-		#reset the card queue variables
-		#card_interaction_queued_hand_position = -1
-		#card_interaction_queued_event = null
 
 ## Connects all necessary signals from child card to this node
 func connect_card_signals(card):
@@ -50,6 +47,7 @@ func draw_card(data):
 ## Places card in hand. If card has a last_hand_position, the card is returned to that position.
 func add_card(card):
 	card.reparent(self)
+	card.scale = card.start_scale * 1
 	if(card.last_hand_position < 0): #if card does not have a last_hand_position, set it to match the rightmost edge of the hand
 		card.last_hand_position = card_array.size()
 	card_array.insert(card.last_hand_position,card) #insert the card into card_array at last_hand_position
@@ -72,7 +70,6 @@ func play_card_from_hand(card):
 
 ## Rearranges cards on the screen
 func rearrange_cards():
-	is_interactable = false
 	var curr_hand_size := card_array.size() # store current hand size
 	var middle_card_index := ((curr_hand_size+1)/2.0) -1.0 # get index of middle card (or index between middle two cards)
 	var dist_from_center := 0.0 # holder for later
@@ -82,33 +79,31 @@ func rearrange_cards():
 		var curr_card = card_array[curr_card_index] # save our current card
 		dist_from_center = curr_card_index - middle_card_index # determine our index distance from the middle card
 		curr_card.z_index = floor(dist_from_center)
-		#curr_card.position.x = (dist_from_center * card_buffer) #offset card position onscreen
-		#curr_card.targetLayer = floor(dist_from_center)
-		curr_card.move_to(Vector2(dist_from_center * card_buffer,0))
-	is_interactable = true
+		curr_card.move_to(Vector2(dist_from_center * (card_buffer.x/curr_hand_size), abs(dist_from_center)*(card_buffer.y / curr_hand_size)))
+		curr_card.rotation = lerpf(0, TAU/18, dist_from_center/curr_hand_size)
 
 ## Enqueues input events from generic 2d_input_event signals
 func _on_card_area_2d_input_event(_viewport, event, _shape_idx, card):
-	if(is_interactable or card.need_move == false):
+	if(is_interactable and card.need_move == false):
 		attempt_card_interaction_enqueue(card, event)
 
 ## Enqueues custom event for mouse_entered signals
 func _on_card_mouse_entered(card):
-	if(is_interactable or card.need_move == false):
+	if(is_interactable and card.need_move == false):
 		attempt_card_interaction_enqueue(card, "mouse_entered")
 
 ## Enqueues custom event for mouse_exited signals
 func _on_card_mouse_exited(card):
-	if(is_interactable or card.need_move == false):
+	if(is_interactable and card.need_move == false):
 		attempt_card_interaction_enqueue(card, "mouse_exited")
 
 ## Attempts to enqueue event from card for interaction this frame
 ## Compares against currently enqueued events, if any exist, to ensure the highest card in hand is preferred
 ## (Also handles certain special cases)
 func attempt_card_interaction_enqueue(card, event):
-	# If the card one above/below is already enqueued, and is highlighted, then don't enqueue current card.
 	var card_queue_pos = card_array.find(card)
 	"""
+	# If the card one above/below is already enqueued, and is highlighted, then don't enqueue current card.
 	if (abs(card.last_hand_position - card_interaction_queued_hand_position) == 1) and (card_array[card_interaction_queued_hand_position].need_highlight):
 		pass
 	elif (abs(card.last_hand_position - card_interaction_queued_hand_position) == 1) and (card.need_highlight):

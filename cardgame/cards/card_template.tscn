@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://8tk27chelhf0"]
 
 [ext_resource type="Texture2D" uid="uid://b8187sy51w1vo" path="res://cardgame/art/basic_card.png" id="1_h4h4f"]
-[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://MyTheme.tres" id="2_ahfly"]
+[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="2_ahfly"]
 
 [node name="CardTemplate" type="Control"]
 custom_minimum_size = Vector2(750, 1050)

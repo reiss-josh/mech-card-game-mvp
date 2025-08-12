@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://ct7h7gofpbsnr"]
+
+[ext_resource type="Script" uid="uid://bu2k1n2piq2kl" path="res://testing/test_scene.gd" id="1_sasra"]
+[ext_resource type="PackedScene" uid="uid://blcbjhhbhiy0m" path="res://cardgame/cards/card_2D.tscn" id="2_coq8p"]
+[ext_resource type="Resource" uid="uid://o6lm6m22s2kd" path="res://cardgame/cards/uniquecards/basic_attack.tres" id="3_2nij2"]
+
+[node name="TestScene" type="Node2D"]
+script = ExtResource("1_sasra")
+
+[node name="Holder" type="Node2D" parent="."]
+position = Vector2(550, 250)
+
+[node name="Card2D" parent="Holder" instance=ExtResource("2_coq8p")]
+position = Vector2(-183, 370)
+rotation = -0.164061
+data = ExtResource("3_2nij2")
+
+[node name="Card2D2" parent="Holder" instance=ExtResource("2_coq8p")]
+position = Vector2(-12, 370)
+data = ExtResource("3_2nij2")
+
+[node name="Card2D3" parent="Holder" instance=ExtResource("2_coq8p")]
+position = Vector2(151, 373)
+rotation = 0.164061
+data = ExtResource("3_2nij2")
+
+[node name="Card2D4" parent="Holder" instance=ExtResource("2_coq8p")]
+position = Vector2(151, 373)
+rotation = 0.164061
+data = ExtResource("3_2nij2")
+
+[node name="Card2D5" parent="Holder" instance=ExtResource("2_coq8p")]
+position = Vector2(151, 373)
+rotation = 0.164061
+data = ExtResource("3_2nij2")

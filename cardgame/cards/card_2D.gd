@@ -5,7 +5,7 @@ class_name Card2D
 # variables for carddata structure
 var card_data_dict := {}
 var debug_name = ""
-var card_y_offset = -150
+var card_size := Vector2(0.3*750, 0.3*1050)
 
 ## Card's last hand position, if applicable
 var last_hand_position : int = -1
@@ -19,8 +19,7 @@ var need_highlight = false
 
 # variables for movement
 var need_move = false
-var move_position_speed = 0.1
-var move_position_timer = 0
+var move_position_speed = 6
 @onready var target_position = self.position
 
 # manage cardData structure
@@ -52,16 +51,20 @@ func _process(delta):
 ## Takes a position and sets that as card's new target position
 func move_to(new_target_position):
 	target_position = new_target_position
-	move_position_timer = 0
 	need_move = true
 	
 ## Lerps card from current position to target position
 func move_to_helper(delta):
-	# Lerp if not there yet
-	if(abs(position.x - target_position.x) > 0.001) or (abs(position.y - target_position.y) > 0.001):
-		move_position_timer += move_position_speed * delta
-		position = position.lerp(target_position, move_position_timer)
-	# Reset variables if arrvived
+	# check if we're close yet
+	var distance_remaining = abs((position.x + position.y) - (target_position.x + target_position.y))
+	if(distance_remaining > move_position_speed*2):
+		var weight = 1 - exp(-move_position_speed * delta)
+		position = position.lerp(target_position, weight)
+	# if we're almost there, square our movement speed
+	elif(distance_remaining > 0.1):
+		var weight = 1 - exp(-(move_position_speed*move_position_speed) * delta)
+		position = position.lerp(target_position, weight)
+	# if we've arrived, update our move flag
 	else:
 		position = target_position
 		need_move = false
@@ -69,19 +72,22 @@ func move_to_helper(delta):
 ## Highlights the card if it isn't already highlighted
 func start_highlight():
 	if(need_highlight == false):
+		#save variables
 		need_highlight = true
 		last_z_index = z_index
 		last_rotation = rotation
-		rotation = 0
+		#set new visuals
 		z_index = 50
+		rotation = 0
 		scale = start_scale * highlight_scale_factor
-		#position.y = card_y_offset
-		#set_anchors_preset(PRESET_CENTER_BOTTOM)
+		position.y = -(1+ card_size.y/2)
 
 ## Ends highlight for the card
 func end_highlight():
+	#save variables
 	need_highlight = false
+	#reset visuals
+	z_index = last_z_index
 	rotation = last_rotation
 	scale = start_scale
-	z_index = last_z_index
 	position.y = 0

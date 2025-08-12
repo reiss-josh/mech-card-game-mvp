@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://1ljxcqaqdghv"]
 
-[ext_resource type="Script" uid="uid://caff5hmqdqiv1" path="res://card_game.gd" id="1_csu0h"]
+[ext_resource type="Script" uid="uid://caff5hmqdqiv1" path="res://cardgame/card_game.gd" id="1_csu0h"]
 [ext_resource type="PackedScene" uid="uid://jqw11grojyyk" path="res://cardgame/card_hand.tscn" id="2_p03o1"]
 [ext_resource type="PackedScene" uid="uid://bykf1i1gkcl8w" path="res://cardgame/card_hud.tscn" id="3_vimfd"]
 [ext_resource type="PackedScene" uid="uid://1w4nv0lg3dtj" path="res://cardgame/card_deck.tscn" id="4_p03o1"]

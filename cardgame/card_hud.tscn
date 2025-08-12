@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bykf1i1gkcl8w"]
 
-[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://MyTheme.tres" id="1_e7j3a"]
+[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="1_e7j3a"]
 
 [node name="CardHud" type="Control"]
 layout_mode = 3

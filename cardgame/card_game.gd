@@ -15,6 +15,7 @@ func _ready():
 	card_deck.create_card(basic_attack_data)
 	draw_card_from_to(card_hand)
 	#draw_card_from_to(card_hand)
+	screen_size = get_viewport_rect().size
 
 func _process(_delta):
 	if Input.is_action_just_pressed("DrawCard"):
@@ -40,13 +41,13 @@ func discard_card():
 ## Move card into selection area
 func _card_selected(card):
 	card.reparent(self)
-	#card.position = Vector2.ZERO
-	card.move_to(Vector2.ZERO)
+	card.move_to(Vector2(screen_size.x * 1/2, screen_size.y * 1/4))
+	card.rotation = 0
+	card.z_index = 5
 	card_held = card
 	card_held_index = card.last_hand_position
 
 ## Return card to hand
 func return_card_to_hand(card):
-	#card.position = Vector2.ZERO
 	$CardHand.add_card(card)
 	$CardHand.is_interactable = true

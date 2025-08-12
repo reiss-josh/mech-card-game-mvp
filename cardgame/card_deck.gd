@@ -5,12 +5,14 @@ var card_buffer = 10 ## distance cards should be apart from eachother in hand (i
 
 var is_interactable := true ## whether deck should respond to input
 var card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
+var card_size := Vector2(0.3*750, 0.3*1050)
 
 func _ready():
 	is_interactable = true
 	var screen_size := get_viewport_rect().size ## stores screen size
-	position.x = screen_size.x * 4/5
-	position.y = screen_size.y * 3/4
+	position.x = screen_size.x - card_size.x/2
+	position.y = screen_size.y - card_size.y/2
+	print(card_size)
 
 #draws cards from the top and returns it
 func draw_card() -> Card2D:
@@ -29,7 +31,7 @@ func create_card(data):
 	card_array.append(card)
 	rearrange_cards()
 
-## Adds card to top of deck
+## Adds card to top of deck (or sent position)
 func add_card(card, insert_position: int = -1):
 	card.reparent(self)
 	if(insert_position >= 0):
@@ -42,12 +44,9 @@ func add_card(card, insert_position: int = -1):
 func rearrange_cards():
 	var curr_hand_size := card_array.size() # store current hand size
 	# crawl over the cards in the array.
-	# if the cards
-	
 	for curr_card_index in card_array.size():
 		var curr_card = card_array[curr_card_index] # save our current card
 		var dist_from_top = curr_hand_size-1 - curr_card_index # determine our index distance from the middle card
 		curr_card.z_index = curr_card_index
-		#curr_card.position.x = (dist_from_center * card_buffer) #offset card position onscreen
-		#curr_card.targetLayer = floor(dist_from_center)
 		curr_card.move_to(Vector2(0, dist_from_top * card_buffer))
+		curr_card.rotation = 0
