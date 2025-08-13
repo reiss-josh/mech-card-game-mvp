@@ -1,10 +1,12 @@
 extends Node2D
 
+class_name CardDeck
+
 var card_array := [] ## array of cards in hand
 var card_buffer = 10 ## distance cards should be apart from eachother in hand (in pixels)
 
 var is_interactable := true ## whether deck should respond to input
-var card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
+var _card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
 var card_size := Vector2(0.3*750, 0.3*1050)
 
 func _ready():
@@ -20,16 +22,15 @@ func draw_card() -> Card2D:
 		return
 	else:
 		var ret_card = card_array.pop_back()
-		rearrange_cards()
+		_rearrange_cards()
 		return ret_card
 
 ## Creates new card from given data, and places at top of the deck
 func create_card(data):
-	var card = card_prefab.instantiate()
+	var card : Card2D = _card_prefab.instantiate()
 	card.data = data
 	add_child(card)
-	card_array.append(card)
-	rearrange_cards()
+	add_card(card)
 
 ## Adds card to top of deck (or sent position)
 func add_card(card, insert_position: int = -1):
@@ -38,10 +39,10 @@ func add_card(card, insert_position: int = -1):
 		card_array.insert(insert_position,card) #insert the card into card_array at position
 	else:
 		card_array.append(card)
-	rearrange_cards()
+	_rearrange_cards()
 		
 ## Rearranges cards on the screen
-func rearrange_cards():
+func _rearrange_cards():
 	var curr_hand_size := card_array.size() # store current hand size
 	# crawl over the cards in the array.
 	for curr_card_index in card_array.size():

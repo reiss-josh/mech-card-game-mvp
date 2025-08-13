@@ -11,7 +11,7 @@ var card_size := Vector2(0.3*750, 0.3*1050)
 var last_hand_position : int = -1
 
 # variables for highlighting
-var highlight_scale_factor = 1.1
+const _HIGHLIGHT_SCALE_FACTOR = 1.1
 var need_highlight = false
 @onready var start_scale = self.scale
 @onready var last_z_index = self.z_index
@@ -19,7 +19,7 @@ var need_highlight = false
 
 # variables for movement
 var need_move = false
-var move_position_speed = 6
+const _MOVE_POSITION_SPEED = 6
 @onready var target_position = self.position
 
 # manage cardData structure
@@ -57,12 +57,12 @@ func move_to(new_target_position):
 func move_to_helper(delta):
 	# check if we're close yet
 	var distance_remaining = abs((position.x + position.y) - (target_position.x + target_position.y))
-	if(distance_remaining > move_position_speed*2):
-		var weight = 1 - exp(-move_position_speed * delta)
+	if(distance_remaining > _MOVE_POSITION_SPEED*2):
+		var weight = 1 - exp(-_MOVE_POSITION_SPEED * delta)
 		position = position.lerp(target_position, weight)
 	# if we're almost there, square our movement speed
 	elif(distance_remaining > 0.1):
-		var weight = 1 - exp(-(move_position_speed*move_position_speed) * delta)
+		var weight = 1 - exp(-(_MOVE_POSITION_SPEED*_MOVE_POSITION_SPEED) * delta)
 		position = position.lerp(target_position, weight)
 	# if we've arrived, update our move flag
 	else:
@@ -79,7 +79,7 @@ func start_highlight():
 		#set new visuals
 		z_index = 50
 		rotation = 0
-		scale = start_scale * highlight_scale_factor
+		scale = start_scale * _HIGHLIGHT_SCALE_FACTOR
 		position.y = -(1+ card_size.y/2)
 
 ## Ends highlight for the card
