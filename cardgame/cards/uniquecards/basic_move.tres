@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_fjvy0")
 card_name = "Basic Move"
-card_cost = 3
+card_energy_cost = 2
 card_type = "Move"
 card_body = "Perform Basic Move"
 metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://jh0h85adqssa"]
+
+[ext_resource type="Script" uid="uid://cym28cgjg1sv1" path="res://cardgame/cardlocations/card_queue.gd" id="1_wmjum"]
+
+[node name="CardQueue" type="Node2D"]
+script = ExtResource("1_wmjum")

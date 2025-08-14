@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_6ewfn")
 card_name = "Basic Attack"
-card_cost = 2
+card_energy_cost = 1
 card_type = "Attack"
 card_body = "Perform Basic Attack"
 metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

@@ -41,7 +41,7 @@ theme = ExtResource("2_ahfly")
 text = "Card Name"
 vertical_alignment = 1
 
-[node name="Cost" type="Label" parent="Background/HeaderMargin/HeaderText"]
+[node name="EnergyCost" type="Label" parent="Background/HeaderMargin/HeaderText"]
 layout_mode = 2
 size_flags_horizontal = 10
 theme = ExtResource("2_ahfly")

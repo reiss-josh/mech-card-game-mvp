@@ -12,7 +12,7 @@ signal card_selected(card) ## signal for card being played
 
 func _process(_delta) -> void:
 	if _card_interaction_queued_event != null: #check and resolve card queue
-		_resolve_card_interaction_queue.call_deferred(card_array[_card_interaction_queued_hand_position], _card_interaction_queued_event)
+		_resolve_card_interaction_queue.call_deferred(_card_array[_card_interaction_queued_hand_position], _card_interaction_queued_event)
 
 
 ## Function for rearranging screen position on _ready
@@ -23,17 +23,18 @@ func _self_positioning() -> void:
 
 
 ## Places card in hand. If card has a last_hand_position, the card is returned to that position.
-func add_card(card, insert_position : int = card.last_hand_position) -> void:
+func add_card(card, insert_position : int = card.last_hand_position) -> bool:
 	card.reparent(self)
 	card.scale = card.start_scale * 1
-	if insert_position > card_array.size() or insert_position < 0: #if card does not have a last_hand_position, set it to match the rightmost edge of the hand
-		card.last_hand_position = card_array.size()
-		card_array.append(card)
+	if insert_position > _card_array.size() or insert_position < 0: #if card does not have a last_hand_position, set it to match the rightmost edge of the hand
+		card.last_hand_position = _card_array.size()
+		_card_array.append(card)
 	else:
 		card.last_hand_position = insert_position  #in case card is being inserted somewhere new
-		card_array.insert(insert_position,card)
+		_card_array.insert(insert_position,card)
 	_connect_card_signals(card)
 	_rearrange_cards()
+	return true
 
 
 ## Updates last_hand_position, and disconnects all signals	
@@ -41,14 +42,15 @@ func _card_removal_unique(card_array_position: int, ret_card : Card2D):
 	ret_card.last_hand_position = card_array_position #special
 	_disconnect_card_signals(ret_card) #special
 
+
 ## Performs the actual rearrangement
 const _CARD_BUFFER := Vector2(500,40) ## distance cards should be apart from eachother in hand (in pixels)
 func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
-	var middle_card_index := ((card_array.size() + 1) / 2.0) - 1.0 # get index of middle card (or index between middle two cards)
+	var middle_card_index := ((_card_array.size() + 1) / 2.0) - 1.0 # get index of middle card (or index between middle two cards)
 	var dist_from_center := curr_card_index - middle_card_index
 	card.z_index = floor(dist_from_center)
-	card.move_to(Vector2(dist_from_center * _CARD_BUFFER.x / card_array.size(), abs(dist_from_center) * _CARD_BUFFER.y / card_array.size()))
-	card.rotation = lerpf(0, TAU/18, dist_from_center / card_array.size())
+	card.move_to(Vector2(dist_from_center * _CARD_BUFFER.x / _card_array.size(), abs(dist_from_center) * _CARD_BUFFER.y / _card_array.size()))
+	card.rotation = lerpf(0, TAU/18, dist_from_center / _card_array.size())
 
 
 ## Connects all necessary signals from child card to this node
@@ -78,7 +80,7 @@ func _attempt_card_interaction_enqueue(card, event) -> void:
 	# Enqueue if any of the following:
 	# 	case 1: card is highest in the hand
 	# 	case 2: card is tied for highest position, and event is a String (overrides clicks/mouse movements with custom events)
-	var card_queue_pos = card_array.find(card)
+	var card_queue_pos = _card_array.find(card)
 	if ((card_queue_pos > _card_interaction_queued_hand_position) or #case1
 		((card_queue_pos == _card_interaction_queued_hand_position) and (event is String))): #case2
 		_card_interaction_queued_hand_position = card_queue_pos
@@ -89,10 +91,10 @@ func _attempt_card_interaction_enqueue(card, event) -> void:
 
 
 ## Performs the input event associated with the card which is highest up in the hand
+# card_selected signal gets emitted from here
 func _resolve_card_interaction_queue(card, event) -> void:
 	#handle mouse-click on card
 	if event is InputEventMouseButton and event.pressed:
-		is_interactable = false
 		card_selected.emit(card)
 	#handle mouse entry/exit
 	elif event is String:
@@ -109,5 +111,16 @@ func _resolve_card_interaction_queue(card, event) -> void:
 
 
 ## Performs a red flash + shake if a card can't be interacted
-func _fail_interaction(card) -> void:
+func fail_interaction(card) -> void:
+	print("failed to play card")
+	pass
+
+
+## Moves hand offscreen when we're not using it
+func hide_hand() -> void:
+	pass
+
+	
+## Moves hand onscreen for playtime
+func show_hand() -> void:
 	pass

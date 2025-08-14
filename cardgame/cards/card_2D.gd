@@ -2,7 +2,7 @@ extends Node2D
 class_name Card2D
 
 # variables for carddata structure
-var card_data_dict := {}
+var card_data := {}
 var debug_name = ""
 var card_size := Vector2(0.3*750, 0.3*1050)
 # Card's last hand position, if applicable
@@ -29,17 +29,17 @@ signal arrived()
 		# check if we actually received any data
 		if(data != null):
 			# check if we've ever saved data for this card before
-			if (card_data_dict.is_empty()):
+			if (card_data.is_empty()):
 				# find references and save
-				card_data_dict["Name"] = card_template.find_child("Name")
-				card_data_dict["Cost"] = card_template.find_child("Cost")
-				card_data_dict["CardBody"] = card_template.find_child("CardBody")
-				card_data_dict["CardType"] = card_template.find_child("CardType")
+				card_data["Name"] = card_template.find_child("Name")
+				card_data["EnergyCost"] = card_template.find_child("EnergyCost")
+				card_data["CardBody"] = card_template.find_child("CardBody")
+				card_data["CardType"] = card_template.find_child("CardType")
 			# save to existing references
-			card_data_dict["Name"].text = data.card_name
-			card_data_dict["Cost"].text = str(data.card_cost)
-			card_data_dict["CardBody"].text = data.card_body
-			card_data_dict["CardType"].text = data.card_type
+			card_data["Name"].text = data.card_name
+			card_data["EnergyCost"].text = str(data.card_energy_cost)
+			card_data["CardBody"].text = data.card_body
+			card_data["CardType"].text = data.card_type
 			debug_name = data.card_name
 
 
