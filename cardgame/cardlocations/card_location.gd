@@ -7,7 +7,6 @@ class_name CardLocation
 
 var _card_array : Array[Card2D] = [] ## Array of cards in hand
 var _card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
-const CARD_SIZE := Vector2(0.3*750, 0.3*1050)
 var is_interactable := true ## Whether hand should respond to input
 
 var card_array_size : int: # Public property for _card_array.size(). Exists mostly to discourage external direct access of _card_array
@@ -49,7 +48,6 @@ func add_card(card, insert_position: int = -1) -> bool:
 	if(self.card_array_isfull):
 		return false
 	card.reparent(self)
-	card.scale = card.start_scale * 1
 	if insert_position > _card_array.size() or insert_position < 0:
 		_card_array.append(card)
 	else:
@@ -78,7 +76,8 @@ func draw_card(card_array_position : int = -1) -> Card2D:
 		ret_card = _card_array[card_array_position]
 		_card_array.remove_at(card_array_position)
 	_card_removal_unique(card_array_position, ret_card) #for hand management ... is this clumsy code?
-	ret_card.end_highlight()
+	if(ret_card.need_highlight): #if card is highlighted, un-highlight it
+		ret_card.end_highlight()
 	_rearrange_cards()
 	return ret_card
 
@@ -96,7 +95,7 @@ func draw_specific_card(card : Card2D) -> Card2D:
 
 ## Special function to be overrloaded by special methods for children on card removal
 ## {OVERLOAD}
-func _card_removal_unique(card_array_position: int, ret_card : Card2D):
+func _card_removal_unique(_card_array_position: int, _ret_card : Card2D):
 	pass
 
 

@@ -25,7 +25,6 @@ func _self_positioning() -> void:
 ## Places card in hand. If card has a last_hand_position, the card is returned to that position.
 func add_card(card, insert_position : int = card.last_hand_position) -> bool:
 	card.reparent(self)
-	card.scale = card.start_scale * 1
 	if insert_position > _card_array.size() or insert_position < 0: #if card does not have a last_hand_position, set it to match the rightmost edge of the hand
 		card.last_hand_position = _card_array.size()
 		_card_array.append(card)
@@ -111,16 +110,21 @@ func _resolve_card_interaction_queue(card, event) -> void:
 
 
 ## Performs a red flash + shake if a card can't be interacted
+#TODO
 func fail_interaction(card) -> void:
-	print("failed to play card")
+	print("failed to play ", card.debug_name)
 	pass
 
 
 ## Moves hand offscreen when we're not using it
+#TODO
 func hide_hand() -> void:
+	self.is_interactable = false
 	pass
 
 	
 ## Moves hand onscreen for playtime
+#TODO
 func show_hand() -> void:
+	self.is_interactable = true
 	pass

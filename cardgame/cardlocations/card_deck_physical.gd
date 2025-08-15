@@ -4,8 +4,8 @@ class_name CardDeckPhysical
 ## Function for rearranging screen position on _ready
 func _self_positioning(card_lengths : int = 1) -> void:
 	var screen_size := get_viewport_rect().size ## stores screen size
-	position.x = screen_size.x - CARD_SIZE.x/2
-	position.y = screen_size.y - (CARD_SIZE.y / 2 + (CARD_SIZE.y * (card_lengths - 1)))
+	position.x = screen_size.x - Global.CARD_SIZE.x/2
+	position.y = screen_size.y - (Global.CARD_SIZE.y / 2 + (Global.CARD_SIZE.y * (card_lengths - 1)))
 
 
 ## For performing _self_positioning() at runtime

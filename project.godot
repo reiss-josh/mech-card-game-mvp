@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="MechCardGame_mvp"
-run/main_scene="uid://1ljxcqaqdghv"
+run/main_scene="uid://dn36us8j2emdq"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 PlayerVariables="*res://player_variables.gd"
+Global="*res://global.gd"
 
 [display]
 

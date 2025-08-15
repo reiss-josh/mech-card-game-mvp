@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bykf1i1gkcl8w"]
+[gd_scene load_steps=3 format=3 uid="uid://ctwwril538mrt"]
 
-[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="1_e7j3a"]
+[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="1_er3yq"]
+[ext_resource type="Script" uid="uid://b3mdfspd235kg" path="res://cardgame/card_hud.gd" id="1_sc0sm"]
 
 [node name="CardHud" type="Control"]
 layout_mode = 3
@@ -9,20 +10,45 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_sc0sm")
+
+[node name="LockInContainer" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = 157.5
+offset_right = 75.0
+offset_bottom = 198.5
+grow_horizontal = 2
+
+[node name="LOCKIN" type="Button" parent="LockInContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("1_er3yq")
+toggle_mode = true
+text = "LOCK IN"
 
 [node name="EnergyContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 286.0
+grow_vertical = 0
 
 [node name="EnergyTip" type="Label" parent="EnergyContainer"]
 layout_mode = 2
-theme = ExtResource("1_e7j3a")
+theme = ExtResource("1_er3yq")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Current Energy:"
 
 [node name="EnergyValue" type="Label" parent="EnergyContainer"]
 layout_mode = 2
-theme = ExtResource("1_e7j3a")
+theme = ExtResource("1_er3yq")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "0"

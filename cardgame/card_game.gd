@@ -9,7 +9,9 @@ var screen_size := Vector2.ZERO ## stores screen size
 @onready var draw_pile : CardLocation = get_node("DrawPile")
 @onready var discard_pile : CardLocation = get_node("DiscardPile")
 @onready var card_queue : CardLocation = get_node("CardQueue")
+signal ready_for_lockin(bool) #signals to GameMaster that we are/aren't ready to lock in
 signal locked_in(queue_array) #signals to GameMaster that we're ready to play
+signal update_player_energy()
 
 
 func _ready() -> void:
@@ -26,8 +28,7 @@ func _process(_delta) -> void:
 	if Input.is_action_just_pressed("DrawCard"):
 		draw_card_from_to(card_hand)
 	if Input.is_action_just_pressed("ReturnCard"):
-		if(card_queue.card_array_size > 0):
-			return_card_to_hand(card_queue.draw_card())
+		_undo_last_queue()
 	if Input.is_action_just_pressed("CreateCard"):
 		draw_pile.create_card(basic_attack_data)
 	if Input.is_action_just_pressed("DiscardCard"):
@@ -85,11 +86,11 @@ func _card_can_be_played(card) -> bool:
 func _play_card(card) -> void:
 	card_hand.draw_specific_card(card) #pull the card out of the hand
 	card_queue.add_card(card) #play the card to the queue
-	_update_player_energy(-int(card.card_data["EnergyCost"].text)) #update energy global
+	update_player_energy.emit(-int(card.card_data["EnergyCost"].text)) #update energy global
 	if(!card_queue.card_array_isfull): #check if the queue still has room after playing the new card
 		return
 	else: #if not, hide the hand, and display the LOCK IN button
-		pass
+		_prepare_lockin()
 
 
 ## TODO: Draws a card into the hand when signalled by UI
@@ -114,16 +115,17 @@ func _on_gain_energy_clicked() -> void:
 
 ## TODO: Hides the hand, displays the LOCK IN button
 func _prepare_lockin()-> void:
-	pass
+	ready_for_lockin.emit(true)
+	card_hand.hide_hand()
+	#display lockin button
 
 
-## Return card to hand
-func return_card_to_hand(card) -> void:
-	_update_player_energy(int(card.card_data["EnergyCost"].text))
-	card_hand.add_card(card)
+## Removes most-recently-queued card
+func _undo_last_queue()-> void:
+	if(card_queue.card_array_size <= 0):
+		return
+	var last_queued_card = card_queue.draw_card()
+	update_player_energy.emit(int(last_queued_card.card_data["EnergyCost"].text))
+	card_hand.add_card(last_queued_card)
 	card_hand.is_interactable = true
-	
-	
-func _update_player_energy(energy_change : int) -> void:
-	PlayerVariables.curr_player_energy += energy_change
-	$CardHud.energy_value = PlayerVariables.curr_player_energy #update the energy display
+	ready_for_lockin.emit(false)

@@ -1,8 +1,19 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dabajwv45vt2w"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://dabajwv45vt2w"]
 
 [ext_resource type="FontFile" uid="uid://c2olhlfgfjrte" path="res://themes/fonts/VCR_OSD_MONO_1.001.ttf" id="1_7swry"]
+[ext_resource type="StyleBox" uid="uid://dnc5c25j28l6j" path="res://themes/ButtonHoverStyle.tres" id="2_giiua"]
+[ext_resource type="StyleBox" uid="uid://dkr2cux1tunol" path="res://themes/ButtonNormalStyle.tres" id="3_l1v4m"]
+[ext_resource type="StyleBox" uid="uid://bh0r81ki57x4p" path="res://themes/Button_Pressed.tres" id="4_hp5fh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_giiua"]
 
 [resource]
+Button/font_sizes/font_size = 25
+Button/fonts/font = ExtResource("1_7swry")
+Button/styles/focus = SubResource("StyleBoxEmpty_giiua")
+Button/styles/hover = ExtResource("2_giiua")
+Button/styles/normal = ExtResource("3_l1v4m")
+Button/styles/pressed = ExtResource("4_hp5fh")
 Label/colors/font_color = Color(0, 0, 0, 1)
 Label/font_sizes/font_size = 30
 Label/fonts/font = ExtResource("1_7swry")

@@ -1,6 +1,7 @@
 extends Control
 
 @onready var _EnergyValue = self.get_node("EnergyContainer/EnergyValue")
+@onready var _LockInButton = self.get_node("LockInContainer/LOCKIN")
 
 
 var energy_value : int :
