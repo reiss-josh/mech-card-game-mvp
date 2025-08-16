@@ -15,19 +15,18 @@ func _ready():
 func _connect_child_signals():
 	card_game.update_player_energy.connect(_on_update_player_energy)
 	card_game.ready_for_lockin.connect(_on_lockin_update)
-	card_hud._LockInButton.pressed.connect(_on_lockin_clicked)
-	
+	card_hud.LockInButton.pressed.connect(_on_lockin_clicked)
+
 
 #handle CardGame signalling whether or not we're ready to LOCK IN
 func _on_lockin_update(ready_for_lockin : bool) -> void:
-	$CardHud.get_node("LockInContainer").visible = true
-	
+	card_hud.LockInButton.visible = ready_for_lockin
+
 
 #handle CardHud signalling that we've LOCKED IN
 func _on_lockin_clicked() -> void:
 	print("!!ACTION!!")
 	pass
-
 
 
 ## Updates player energy global.
