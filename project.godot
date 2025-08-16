@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 PlayerVariables="*res://player_variables.gd"
 Global="*res://global.gd"
+DeckListManager="*res://cardgame/deck_list_manager.gd"
 
 [display]
 

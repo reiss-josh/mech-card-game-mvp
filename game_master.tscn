@@ -1,12 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dn36us8j2emdq"]
+[gd_scene load_steps=3 format=3 uid="uid://dn36us8j2emdq"]
 
 [ext_resource type="Script" uid="uid://dl5ttc3emdvi4" path="res://game_master.gd" id="1_5yk56"]
 [ext_resource type="PackedScene" uid="uid://1ljxcqaqdghv" path="res://cardgame/card_game.tscn" id="2_yy1gc"]
-[ext_resource type="PackedScene" uid="uid://ctwwril538mrt" path="res://cardgame/card_hud.tscn" id="3_3ef5b"]
 
 [node name="GameMaster" type="Node"]
 script = ExtResource("1_5yk56")
-
-[node name="CardHud" parent="." instance=ExtResource("3_3ef5b")]
 
 [node name="CardGame" parent="." instance=ExtResource("2_yy1gc")]

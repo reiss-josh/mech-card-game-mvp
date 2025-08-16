@@ -7,6 +7,7 @@ func _self_positioning() -> void:
 	var screen_size = get_viewport_rect().size
 	self.position.y = Global.CARD_SIZE.y/2 * Global.CARD_QUEUE_SCALE
 	self.position.x = screen_size.x * 1/2
+	_HIDE_OFFSET = Vector2(0, -Global.CARD_SIZE.y * Global.CARD_QUEUE_SCALE * 1.5)
 	pass
 
 
@@ -27,9 +28,3 @@ func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
 	card.z_index = 5
 	card.move_to(Vector2(dist_from_center * _CARD_BUFFER.x, 0), Global.CARD_QUEUE_SCALE)
 	card.rotation = 0
-
-
-## Special function to be overrloaded by special methods for children on card removal
-#TODO
-func _card_removal_unique(card_array_position: int, ret_card : Card2D):
-	pass

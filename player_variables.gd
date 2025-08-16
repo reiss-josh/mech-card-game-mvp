@@ -9,4 +9,4 @@ var curr_player_energy := 5
 var max_player_health := 10
 var max_player_energy := 5
 var max_player_hand_size := 5
-var max_player_clicks := 4
+var max_player_clicks := 3

@@ -9,10 +9,11 @@ var _card_interaction_queued_event = null ## input event for highest-indexed car
 var _card_interaction_queued_hand_position : int = -1 ## highest-position card interacted with this frame
 signal card_selected(card) ## signal for card being played
 
-
-func _process(_delta) -> void:
+func _process(delta) -> void:
 	if _card_interaction_queued_event != null: #check and resolve card queue
 		_resolve_card_interaction_queue.call_deferred(_card_array[_card_interaction_queued_hand_position], _card_interaction_queued_event)
+	if _hide_flag >= 0:
+		_show_hide_helper(delta)
 
 
 ## Function for rearranging screen position on _ready
@@ -20,6 +21,7 @@ func _self_positioning() -> void:
 	var screen_size := get_viewport_rect().size
 	position.x = screen_size.x * 1/2
 	position.y = screen_size.y * .99
+	_HIDE_OFFSET = Vector2(0, Global.CARD_SIZE.y) #would like to make this const, but children need to override it
 
 
 ## Places card in hand. If card has a last_hand_position, the card is returned to that position.
@@ -113,18 +115,4 @@ func _resolve_card_interaction_queue(card, event) -> void:
 #TODO
 func fail_interaction(card) -> void:
 	print("failed to play ", card.debug_name)
-	pass
-
-
-## Moves hand offscreen when we're not using it
-#TODO
-func hide_hand() -> void:
-	self.is_interactable = false
-	pass
-
-	
-## Moves hand onscreen for playtime
-#TODO
-func show_hand() -> void:
-	self.is_interactable = true
 	pass

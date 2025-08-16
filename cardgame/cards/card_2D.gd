@@ -2,7 +2,7 @@ extends Node2D
 class_name Card2D
 
 # variables for carddata structure
-var card_data := {}
+var _card_data_dict := {}
 var debug_name := ""
 #const CARD_SIZE := Vector2(0.3*750, 0.3*1050)
 # Card's last hand position, if applicable
@@ -11,9 +11,9 @@ var last_hand_position : int = -1
 const _HIGHLIGHT_SCALE_FACTOR := 1.1
 const _HIGHLIGHT_Z_INDEX := 50
 var need_highlight = false
-@onready var last_rotation := self.rotation
+@onready var _last_transform := self.transform
 @onready var start_scale : Vector2 = self.scale
-@onready var last_z_index : int = self.z_index
+@onready var _last_z_index : int = self.z_index
 # variables for movement/scaling
 var need_move := false
 const _MOVE_POSITION_SPEED := 6
@@ -30,17 +30,17 @@ signal arrived()
 		# check if we actually received any data
 		if(data != null):
 			# check if we've ever saved data for this card before
-			if (card_data.is_empty()):
+			if (_card_data_dict.is_empty()):
 				# find references and save
-				card_data["Name"] = card_template.find_child("Name")
-				card_data["EnergyCost"] = card_template.find_child("EnergyCost")
-				card_data["CardBody"] = card_template.find_child("CardBody")
-				card_data["CardType"] = card_template.find_child("CardType")
+				_card_data_dict["Name"] = card_template.find_child("Name")
+				_card_data_dict["EnergyCost"] = card_template.find_child("EnergyCost")
+				_card_data_dict["CardBody"] = card_template.find_child("CardBody")
+				_card_data_dict["CardType"] = card_template.find_child("CardType")
 			# save to existing references
-			card_data["Name"].text = data.card_name
-			card_data["EnergyCost"].text = str(data.card_energy_cost)
-			card_data["CardBody"].text = data.card_body
-			card_data["CardType"].text = data.card_type
+			_card_data_dict["Name"].text = data.card_name
+			_card_data_dict["EnergyCost"].text = str(data.card_energy_cost)
+			_card_data_dict["CardBody"].text = data.card_body
+			_card_data_dict["CardType"].text = data.card_type
 			debug_name = data.card_name
 
 
@@ -88,8 +88,8 @@ func start_highlight() -> void:
 		return
 	#store variables
 	need_highlight = true
-	last_z_index = z_index
-	last_rotation = rotation
+	_last_z_index = z_index
+	_last_transform = self.transform
 	#set new visuals
 	var newTransform := Transform2D (
 		0, #rotation
@@ -105,7 +105,7 @@ func end_highlight() -> void:
 	#store variables
 	need_highlight = false
 	#reset visuals
-	_update_appearance(Transform2D (last_rotation, start_scale, self.skew, Vector2(self.position.x, 0)), last_z_index)
+	_update_appearance(_last_transform, _last_z_index)
 
 
 ## Updates appearance (helper for highlight functions above)

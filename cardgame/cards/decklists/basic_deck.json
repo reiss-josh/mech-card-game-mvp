@@ -1,0 +1,15 @@
+{
+	"name":"Basic Deck",
+	"cards":[
+		"basic_attack",
+		"basic_attack",
+		"basic_attack",
+		"basic_attack",
+		"basic_attack",
+		"basic_move",
+		"basic_move",
+		"basic_move",
+		"basic_move",
+		"basic_move",
+	],
+}

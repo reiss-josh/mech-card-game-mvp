@@ -1,27 +1,32 @@
-extends Node2D
+extends Node
 class_name CardGame
 
 var basic_move_data := load("res://cardgame/cards/uniquecards/basic_move.tres")
 var basic_attack_data := load("res://cardgame/cards/uniquecards/basic_attack.tres")
-var screen_size := Vector2.ZERO ## stores screen size
 #store our card locations
 @onready var card_hand : CardLocation = get_node("CardHand")
 @onready var draw_pile : CardLocation = get_node("DrawPile")
 @onready var discard_pile : CardLocation = get_node("DiscardPile")
 @onready var card_queue : CardLocation = get_node("CardQueue")
-signal ready_for_lockin(bool) #signals to GameMaster that we are/aren't ready to lock in
+@onready var card_hud : CardHud = $CardHud
+var _prepared_lockin : bool = false
+var _discard_mode : bool = false
 signal locked_in(queue_array) #signals to GameMaster that we're ready to play
-signal update_player_energy()
 
 
 func _ready() -> void:
-	card_hand.card_selected.connect(_card_selected)
-	discard_pile.reposition_deck(2)
-	screen_size = get_viewport_rect().size
+	#set up our deck
+	draw_pile.create_from_decklist("basic_deck")
+	#fill up our hand to hand size
+	for i in PlayerVariables.max_player_hand_size:
+		draw_card_from_to(card_hand, draw_pile)
+	start_turn()
 	
-	draw_pile.create_card(basic_attack_data)
-	draw_card_from_to(card_hand, draw_pile)
-	discard_card(discard_pile)
+	_connect_child_signals()
+
+func _connect_child_signals():
+	card_hand.card_selected.connect(_card_selected)
+	card_hud.LockInButton.pressed.connect(_on_lockin_clicked)
 
 
 func _process(_delta) -> void:
@@ -43,32 +48,63 @@ func draw_card_from_to(destination, deck = draw_pile) -> void:
 
 
 ## Discards a card from the card hand, and adds it to the discard pile (can manually specify a deck instead)
-func discard_card(destination = discard_pile, hand_position : int = -1) -> void:
-	if(card_hand.card_array_size < 1):
+func discard_card(hand_position : int = -1) -> void:
+	if(card_hand.card_array_size <= 0):
 		return
 	if(hand_position < 0):
 		hand_position = card_hand.card_array_size-1
 	var card = card_hand.draw_card(hand_position)
 	card.last_hand_position = -1
-	destination.add_card(card)
+	discard_pile.add_card(card)
+	
+	
+## Discards specifically requested card
+func discard_specific_card(card : Card2D) -> void:
+	if card_hand.card_array_size <= 0:
+		return
+	discard_card(card_hand._card_array.find(card))
 
 
-## TODO: Does all the setup for starting a turn
-# makes hand visible, makes buttons visible, draws a card from the deck
+## Makes hand visible, makes buttons visible, draws a card from the deck
 func start_turn() -> void:
+	_prepared_lockin = false
+	card_hand.show_location()
+	draw_pile.show_location()
+	discard_pile.show_location()
+	card_queue.show_location()
+	
+	draw_card_from_to(card_hand, draw_pile)
 	pass
 
 
-## TODO: Does all the cleanup for ending a turn
-# hides the hand, hides the buttons, discards down to max_player_hand_size
+## Hides the hand, hides the buttons
+# TODO: discards down to max_player_hand_size
 func end_turn() -> void:
-	pass
+	# check if we need to discard -- if so, stop ending the turn, and toggle discard mode
+	if(card_hand.card_array_size > PlayerVariables.max_player_hand_size):
+		card_hand.show_location()
+		_discard_mode = true
+		return
+	
+	# do the rest of the end-turn stuff
+	# update HUD
+	card_hud.LockInButton.visible = false
+	card_hud.LockInButton.button_pressed = false
+	
 
 
 ## Handles a card being clicked
 func _card_selected(card) -> void:
-	# check if card can be played
-	if(_card_can_be_played(card)):
+	# check if we're in discard mode -- if so, try to discard, then see if we can end the turn.
+	if(_discard_mode):
+		discard_specific_card(card)
+		if(card_hand.card_array_size <= PlayerVariables.max_player_hand_size): #check if we can end the turn yet
+			_discard_mode = false
+			card_hand.hide_location()
+			end_turn()
+		return
+	# if we're not in discard mode, we continue the regular card playing procedure:
+	if(_card_can_be_played(card)): # check if card can be played
 		_play_card(card) # place the card in play area, pay relevant costs
 	else:
 		card_hand.fail_interaction(card)
@@ -76,7 +112,7 @@ func _card_selected(card) -> void:
 
 ## Checks if a card can be legally played; returns true/false
 func _card_can_be_played(card) -> bool:
-	var card_energy_cost = int(card.card_data["EnergyCost"].text)
+	var card_energy_cost = card.data.card_energy_cost
 	if((card_energy_cost <= PlayerVariables.curr_player_energy) and !card_queue.card_array_isfull):
 		return true
 	return false
@@ -86,7 +122,7 @@ func _card_can_be_played(card) -> bool:
 func _play_card(card) -> void:
 	card_hand.draw_specific_card(card) #pull the card out of the hand
 	card_queue.add_card(card) #play the card to the queue
-	update_player_energy.emit(-int(card.card_data["EnergyCost"].text)) #update energy global
+	_update_player_energy(-card.data.card_energy_cost) #update energy global
 	if(!card_queue.card_array_isfull): #check if the queue still has room after playing the new card
 		return
 	else: #if not, hide the hand, and display the LOCK IN button
@@ -113,19 +149,47 @@ func _on_gain_energy_clicked() -> void:
 		# if there's no more room in the queue, show the LOCK IN button
 
 
-## TODO: Hides the hand, displays the LOCK IN button
+## Gets the LOCK IN button ready
 func _prepare_lockin()-> void:
-	ready_for_lockin.emit(true)
-	card_hand.hide_hand()
-	#display lockin button
+	#update flag
+	_prepared_lockin = true
+	#update HUD
+	card_hud.LockInButton.visible = true
+	#hide locations
+	card_hand.hide_location()
+	draw_pile.hide_location()
+	discard_pile.hide_location()
 
 
 ## Removes most-recently-queued card
+## Makes UI available, if it was previously hidden
 func _undo_last_queue()-> void:
+	#early return if we're about to do an index OOB
 	if(card_queue.card_array_size <= 0):
 		return
+	#gets the card out, and updates the HUD
 	var last_queued_card = card_queue.draw_card()
-	update_player_energy.emit(int(last_queued_card.card_data["EnergyCost"].text))
+	_update_player_energy(last_queued_card.data.card_energy_cost)
 	card_hand.add_card(last_queued_card)
-	card_hand.is_interactable = true
-	ready_for_lockin.emit(false)
+	#if removing this card cancels our lockin,
+	if(_prepared_lockin):
+		_prepared_lockin = false
+		card_hud.LockInButton.visible = false
+		#show locations
+		card_hand.show_location()
+		draw_pile.show_location()
+		discard_pile.show_location()
+
+#handle CardHud signalling that we've LOCKED IN
+func _on_lockin_clicked() -> void:
+	print("!!ACTION!!")
+	locked_in.emit(card_queue._card_array)
+	end_turn()
+	pass
+
+
+## Updates player energy global.
+## Updates the hud to reflect changes.
+func _update_player_energy(energy_change : int) -> void:
+	PlayerVariables.curr_player_energy += energy_change
+	card_hud.energy_value = PlayerVariables.curr_player_energy #update the energy display

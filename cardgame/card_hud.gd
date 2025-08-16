@@ -1,4 +1,5 @@
 extends Control
+class_name CardHud
 
 @onready var _EnergyValue = self.get_node("EnergyContainer/EnergyValue")
 @export var LockInButton : Button
@@ -13,8 +14,7 @@ var energy_value : int :
 
 func _ready() -> void:
 	prepare_hud()
-	print(LockInButton)
-	
+
 
 ## Set text variables, rearrange the hud elements
 func prepare_hud() -> void:
