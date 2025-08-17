@@ -3,7 +3,7 @@
 [ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="1_er3yq"]
 [ext_resource type="Script" uid="uid://b3mdfspd235kg" path="res://cardgame/card_hud.gd" id="1_sc0sm"]
 
-[node name="CardHud" type="Control" node_paths=PackedStringArray("LockInButton")]
+[node name="CardHud" type="Control" node_paths=PackedStringArray("LockInButton", "EnergyButton", "DrawButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,14 +13,31 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_sc0sm")
 LockInButton = NodePath("QueueContainer/LockInContainer/LOCKIN")
+EnergyButton = NodePath("GainEnergy")
+DrawButton = NodePath("DrawButton")
+
+[node name="DrawButton" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="GainEnergy" type="Button" parent="."]
+custom_minimum_size = Vector2(280, 40)
+layout_mode = 1
+offset_right = 280.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource("1_er3yq")
+text = "Gain Energy (1c)"
 
 [node name="QueueContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -576.0
-offset_right = -376.0
+offset_left = -100.0
+offset_right = 100.0
 offset_bottom = 181.0
 grow_horizontal = 2
 
@@ -47,13 +64,12 @@ toggle_mode = true
 text = "LOCK IN"
 
 [node name="EnergyContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -40.0
-offset_right = 286.0
+layout_mode = 2
+offset_top = 621.0
+offset_right = 280.0
+offset_bottom = 648.0
 grow_vertical = 0
+size_flags_vertical = 10
 
 [node name="EnergyTip" type="Label" parent="EnergyContainer"]
 layout_mode = 2

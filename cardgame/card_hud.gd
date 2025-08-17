@@ -3,6 +3,8 @@ class_name CardHud
 
 @onready var _EnergyValue = self.get_node("EnergyContainer/EnergyValue")
 @export var LockInButton : Button
+@export var EnergyButton : Button
+@export var DrawButton : Button
 
 
 var energy_value : int :

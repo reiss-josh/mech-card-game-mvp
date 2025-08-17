@@ -27,6 +27,7 @@ func _ready() -> void:
 func _connect_child_signals():
 	card_hand.card_selected.connect(_card_selected)
 	card_hud.LockInButton.pressed.connect(_on_lockin_clicked)
+	card_hud.EnergyButton.pressed.connect(_on_gain_energy_clicked)
 
 
 func _process(_delta) -> void:
@@ -74,7 +75,6 @@ func start_turn() -> void:
 	card_queue.show_location()
 	
 	draw_card_from_to(card_hand, draw_pile)
-	pass
 
 
 ## Hides the hand, hides the buttons
@@ -90,7 +90,6 @@ func end_turn() -> void:
 	# update HUD
 	card_hud.LockInButton.visible = false
 	card_hud.LockInButton.button_pressed = false
-	
 
 
 ## Handles a card being clicked
@@ -149,6 +148,13 @@ func _on_gain_energy_clicked() -> void:
 		# if there's no more room in the queue, show the LOCK IN button
 
 
+#handle CardHud signalling that we've LOCKED IN
+func _on_lockin_clicked() -> void:
+	print("!!ACTION!!")
+	locked_in.emit(card_queue._card_array)
+	end_turn()
+
+
 ## Gets the LOCK IN button ready
 func _prepare_lockin()-> void:
 	#update flag
@@ -179,13 +185,6 @@ func _undo_last_queue()-> void:
 		card_hand.show_location()
 		draw_pile.show_location()
 		discard_pile.show_location()
-
-#handle CardHud signalling that we've LOCKED IN
-func _on_lockin_clicked() -> void:
-	print("!!ACTION!!")
-	locked_in.emit(card_queue._card_array)
-	end_turn()
-	pass
 
 
 ## Updates player energy global.

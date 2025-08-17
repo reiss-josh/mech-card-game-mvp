@@ -10,10 +10,10 @@ extends Node
 func _ready():
 	_connect_child_signals()
 	
-	
+
 func _connect_child_signals():
 	card_game.locked_in.connect(_on_card_game_locked_in)
-	
+
 
 func _on_card_game_locked_in(queue_array) -> void:
 	print("The following cards have been queued:")
