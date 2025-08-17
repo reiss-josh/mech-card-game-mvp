@@ -1,8 +1,7 @@
 extends Node
 class_name CardGame
 
-var basic_move_data := load("res://cardgame/cards/uniquecards/basic_move.tres")
-var basic_attack_data := load("res://cardgame/cards/uniquecards/basic_attack.tres")
+var basic_attack_data = load("res://cardgame/cards/uniquecards/basic_attack.tres")
 #store our card locations
 @onready var card_hand : CardLocation = get_node("CardHand")
 @onready var draw_pile : CardLocation = get_node("DrawPile")
@@ -69,6 +68,7 @@ func discard_specific_card(card : Card2D) -> void:
 ## Makes hand visible, makes buttons visible, draws a card from the deck
 func start_turn() -> void:
 	_prepared_lockin = false
+	card_hud.EnergyButton.visible = true
 	card_hand.show_location()
 	draw_pile.show_location()
 	discard_pile.show_location()
@@ -121,10 +121,8 @@ func _card_can_be_played(card) -> bool:
 func _play_card(card) -> void:
 	card_hand.draw_specific_card(card) #pull the card out of the hand
 	card_queue.add_card(card) #play the card to the queue
-	_update_player_energy(-card.data.card_energy_cost) #update energy global
-	if(!card_queue.card_array_isfull): #check if the queue still has room after playing the new card
-		return
-	else: #if not, hide the hand, and display the LOCK IN button
+	manage_card_playing(card)
+	if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
 		_prepare_lockin()
 
 
@@ -138,9 +136,13 @@ func _on_draw_card_clicked() -> void:
 		# if there's no more room in the queue, immediately lock in
 
 
-## TODO: Gains an energy when signalled by UI
 func _on_gain_energy_clicked() -> void:
-	pass
+	if(card_queue.card_array_isfull):
+		return
+	card_queue.add_energy_card()
+	_update_player_energy(1)
+	if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
+		_prepare_lockin()
 	#check if there's any room left in queue
 	# if yes:
 		# gain 1 energy
@@ -161,6 +163,7 @@ func _prepare_lockin()-> void:
 	_prepared_lockin = true
 	#update HUD
 	card_hud.LockInButton.visible = true
+	card_hud.EnergyButton.visible = false
 	#hide locations
 	card_hand.hide_location()
 	draw_pile.hide_location()
@@ -175,16 +178,35 @@ func _undo_last_queue()-> void:
 		return
 	#gets the card out, and updates the HUD
 	var last_queued_card = card_queue.draw_card()
-	_update_player_energy(last_queued_card.data.card_energy_cost)
-	card_hand.add_card(last_queued_card)
+	manage_card_cancel(last_queued_card)
+	if(last_queued_card.data.card_name == "Basic Energy"):
+		last_queued_card.free()
+	else:
+		card_hand.add_card(last_queued_card)
+	
 	#if removing this card cancels our lockin,
 	if(_prepared_lockin):
 		_prepared_lockin = false
 		card_hud.LockInButton.visible = false
+		card_hud.EnergyButton.visible = true
 		#show locations
 		card_hand.show_location()
 		draw_pile.show_location()
 		discard_pile.show_location()
+
+
+#handles energy updates for played cards
+func manage_card_playing(card : Card2D) -> void:
+	_update_player_energy(-card.data.card_energy_cost)
+	if(card.data.card_type == "Energy"):
+		_update_player_energy(card.data.card_value)
+
+
+#handles energy updates for cancelled cards
+func manage_card_cancel(card : Card2D) -> void:
+	_update_player_energy(card.data.card_energy_cost)
+	if(card.data.card_type == "Energy"):
+		_update_player_energy(-card.data.card_value)
 
 
 ## Updates player energy global.

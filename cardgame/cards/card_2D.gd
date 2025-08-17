@@ -36,11 +36,13 @@ signal arrived()
 				_card_data_dict["EnergyCost"] = card_template.find_child("EnergyCost")
 				_card_data_dict["CardBody"] = card_template.find_child("CardBody")
 				_card_data_dict["CardType"] = card_template.find_child("CardType")
+				#_card_data_dict["CardValue"] = card_template.find_child("CardValue")
 			# save to existing references
 			_card_data_dict["Name"].text = data.card_name
 			_card_data_dict["EnergyCost"].text = str(data.card_energy_cost)
 			_card_data_dict["CardBody"].text = data.card_body
 			_card_data_dict["CardType"].text = data.card_type
+			#_card_data_dict["CardValue"].text = data.card_value
 			debug_name = data.card_name
 
 

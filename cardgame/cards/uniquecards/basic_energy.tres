@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://bh3yg574lehfe"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_rh7dn"]
+
+[resource]
+script = ExtResource("1_rh7dn")
+card_name = "Basic Energy"
+card_energy_cost = 0
+card_type = "Energy"
+card_value = 1
+card_body = "Gain 1 Energy"
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"
