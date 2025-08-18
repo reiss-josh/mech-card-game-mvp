@@ -1,10 +1,12 @@
 extends Control
 class_name CardHud
 
-@onready var _EnergyValue = self.get_node("EnergyContainer/EnergyValue")
+@export var _ClickValue : Label 
+@export var _EnergyValue : Label
 @export var LockInButton : Button
 @export var EnergyButton : Button
 @export var DrawButton : Button
+@export var ActionButtons : Container
 
 
 var energy_value : int :
@@ -12,6 +14,12 @@ var energy_value : int :
 		return int(_EnergyValue.text)
 	set(value):
 		_EnergyValue.text = str(value)
+
+var click_value : int :
+	get:
+		return int(_ClickValue.text)
+	set(value):
+		_ClickValue.text = str(value)
 
 
 func _ready() -> void:
@@ -21,6 +29,7 @@ func _ready() -> void:
 ## Set text variables, rearrange the hud elements
 func prepare_hud() -> void:
 	energy_value = PlayerVariables.curr_player_energy
+	click_value = PlayerVariables.curr_player_clicks
 	$QueueContainer.size.x = (
 		Global.CARD_SIZE.x * PlayerVariables.max_player_clicks * Global.CARD_QUEUE_SCALE) + (
 		Global.CARD_QUEUE_ADDITIONAL_BUFFER.x * (PlayerVariables.max_player_clicks - 1)

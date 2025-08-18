@@ -3,11 +3,13 @@ class_name CardGame
 
 var basic_attack_data = load("res://cardgame/cards/uniquecards/basic_attack.tres")
 var energy_card_data = load("res://cardgame/cards/uniquecards/basic_energy.tres")
+var draw_card_data = load("res://cardgame/cards/uniquecards/basic_draw.tres")
 #store our card locations
 @onready var card_hand : CardLocation = get_node("CardHand")
 @onready var draw_pile : CardLocation = get_node("DrawPile")
 @onready var discard_pile : CardLocation = get_node("DiscardPile")
 @onready var card_queue : CardLocation = get_node("CardQueue")
+@onready var draw_queue : CardLocation = get_node("DrawQueue")
 @onready var card_hud : CardHud = $CardHud
 var _prepared_lockin : bool = false
 var _discard_mode : bool = false
@@ -18,21 +20,14 @@ func _ready() -> void:
 	#set up our deck
 	draw_pile.create_from_decklist("basic_deck")
 	#fill up our hand to hand size
-	for i in PlayerVariables.max_player_hand_size:
-		draw_card_from_to(card_hand, draw_pile)
+	draw_card_to_from(card_hand, draw_pile, PlayerVariables.max_player_hand_size)
 	start_turn()
-	
 	_connect_child_signals()
-
-func _connect_child_signals():
-	card_hand.card_selected.connect(_card_selected)
-	card_hud.LockInButton.pressed.connect(_on_lockin_clicked)
-	card_hud.EnergyButton.pressed.connect(_on_gain_energy_clicked)
 
 
 func _process(_delta) -> void:
 	if Input.is_action_just_pressed("DrawCard"):
-		draw_card_from_to(card_hand)
+		draw_card_to_from(card_hand, draw_pile)
 	if Input.is_action_just_pressed("ReturnCard"):
 		_undo_last_queue()
 	if Input.is_action_just_pressed("CreateCard"):
@@ -41,14 +36,25 @@ func _process(_delta) -> void:
 		discard_card()
 
 
-## Takes a destination and adds a card to it from the draw pile (can manually specify a deck instead)
-func draw_card_from_to(destination, deck = draw_pile) -> void:
-	var drawn_card = deck.draw_card()
-	if drawn_card is Card2D:
-		destination.add_card(drawn_card)
+## Connects all the necessary signals from children
+func _connect_child_signals():
+	card_hand.card_selected.connect(_on_card_selected)
+	card_hud.LockInButton.pressed.connect(_on_lockin_clicked)
+	card_hud.EnergyButton.pressed.connect(_on_gain_energy_clicked)
+	card_hud.DrawButton.pressed.connect(_on_draw_card_clicked)
 
 
-## Discards a card from the card hand, and adds it to the discard pile (can manually specify a deck instead)
+## Draws a card to [destination] from [source] (defaults to draw_pile)
+## Takes optional [quantity] parameter
+func draw_card_to_from(destination : CardLocation, source : CardLocation = draw_pile, quantity : int = 1) -> void:
+	for cards in quantity:
+		var drawn_card = source.draw_card()
+		if drawn_card is Card2D:
+			destination.add_card(drawn_card)
+
+
+## Discards a card from the card hand, and adds it to the discard pile
+## Takes optional [hand_position] parameter
 func discard_card(hand_position : int = -1) -> void:
 	if(card_hand.card_array_size <= 0):
 		return
@@ -57,20 +63,24 @@ func discard_card(hand_position : int = -1) -> void:
 	var card = card_hand.draw_card(hand_position)
 	card.last_hand_position = -1
 	discard_pile.add_card(card)
-	
-	
-## Discards specifically requested card
+
+
+## Discards specifically requested [card] from the card hand
 func discard_specific_card(card : Card2D) -> void:
 	if card_hand.card_array_size <= 0:
 		return
-	discard_card(card_hand._card_array.find(card))
+	card_hand.draw_specific_card(card)
+	card.last_hand_position = -1
+	discard_pile.add_card(card)
 
 
 ## Makes hand visible, makes buttons visible, draws a card from the deck
 func start_turn() -> void:
 	_prepare_cancel_lockin(false)
+	PlayerVariables.curr_player_clicks = PlayerVariables.max_player_clicks
 	card_queue.show_location()
-	draw_card_from_to(card_hand, draw_pile)
+	draw_queue.show_location()
+	draw_card_to_from(card_hand, draw_pile)
 
 
 ## Hides the hand, hides the buttons
@@ -87,8 +97,8 @@ func end_turn() -> void:
 	card_hud.LockInButton.button_pressed = false
 
 
-## Handles a card being clicked
-func _card_selected(card) -> void:
+## Handles [card] being clicked
+func _on_card_selected(card : Card2D) -> void:
 	# check if we're in discard mode -- if so, try to discard, then see if we can end the turn.
 	if(_discard_mode):
 		discard_specific_card(card)
@@ -99,49 +109,48 @@ func _card_selected(card) -> void:
 		return
 	# if we're not in discard mode, we continue the regular card playing procedure:
 	if(_card_can_be_played(card)): # check if card can be played
+		card_hand.draw_specific_card(card)
+		card_queue.add_card(card)
 		_play_card(card) # place the card in play area, pay relevant costs
 	else:
 		card_hand.fail_interaction(card)
 
 
-## Checks if a card can be legally played; returns true/false
-func _card_can_be_played(card) -> bool:
+## Checks if [card] can be legally played; returns true/false
+func _card_can_be_played(card : Card2D) -> bool:
 	var card_energy_cost = card.data.card_energy_cost
 	if((card_energy_cost <= PlayerVariables.curr_player_energy) and !card_queue.card_array_isfull):
 		return true
 	return false
 
 
-## Plays a card to the queue
-func _play_card(card) -> void:
-	card_hand.draw_specific_card(card) #pull the card out of the hand
-	card_queue.add_card(card) #play the card to the queue
+## Plays [card] to the queue, and handles any interactions
+func _play_card(card : Card2D) -> void:
+	#card_hand.draw_specific_card(card) #pull the card out of the hand
+	#card_queue.add_card(card) #play the card to the queue
 	manage_card_play_cancel(card, true)
 	if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
 		_prepare_cancel_lockin(true)
 
 
-## TODO: Draws a card into the hand when signalled by UI
-func _on_draw_card_clicked() -> void:
-	pass
-	#check if there's any room left in queue
-	# if yes:
-		# draw a card from the deck into the hand
-		# block out the rightmost slot of queue with a "drew card"
-		# if there's no more room in the queue, immediately lock in
-
-
-## Gains 1 energy
+## Gains 1 energy when signalled by UI
 func _on_gain_energy_clicked() -> void:
 	if(card_queue.card_array_isfull):
 		return
-	card_queue.create_card(energy_card_data)
-	_update_player_energy(1)
-	if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
-		_prepare_cancel_lockin(true)
+	_play_card(card_queue.create_card(energy_card_data))
+	#_update_player_energy(1)
+	#if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
+	#	_prepare_cancel_lockin(true)
 
 
-#handle CardHud signalling that we've LOCKED IN
+## Draws a card into the hand when signalled by UI
+func _on_draw_card_clicked() -> void:
+	if(card_queue.card_array_isfull):
+		return
+	_play_card(draw_queue.create_card(draw_card_data))
+
+
+## Handls CardHud signalling that we've LOCKED IN
 func _on_lockin_clicked() -> void:
 	print("!!ACTION!!")
 	locked_in.emit(card_queue._card_array)
@@ -156,6 +165,8 @@ func _undo_last_queue()-> void:
 		return
 	#gets the card out, and updates the HUD
 	var last_queued_card = card_queue.draw_card()
+	if(last_queued_card is not Card2D):
+		return
 	manage_card_play_cancel(last_queued_card, false)
 	if(last_queued_card.data.card_name == "Basic Energy"):
 		last_queued_card.free()
@@ -167,13 +178,13 @@ func _undo_last_queue()-> void:
 		_prepare_cancel_lockin(false)
 
 
-## Gets the LOCK IN button ready
+## Performs / cancels pre-lockin procedures, depending on [is_preparing]
 func _prepare_cancel_lockin(is_preparing : bool = true)-> void:
 	#update flag
 	_prepared_lockin = is_preparing
 	#update HUD
 	card_hud.LockInButton.visible = is_preparing
-	card_hud.EnergyButton.visible = !is_preparing
+	card_hud.ActionButtons.visible = !is_preparing
 	#hide locations
 	if(is_preparing):
 		card_hand.hide_location()
@@ -185,18 +196,27 @@ func _prepare_cancel_lockin(is_preparing : bool = true)-> void:
 		discard_pile.show_location()
 
 
-#handles energy updates for played cards
+## Handles playing / cancelling of [card]
+## Takes [is_playing] - {true} if playing, {false} if cancelling
 func manage_card_play_cancel(card : Card2D, is_playing: bool = true) -> void:
 	var play_cancel_mult = int(is_playing)
 	if(play_cancel_mult == 0): play_cancel_mult = -1
 	
-	_update_player_energy(-card.data.card_energy_cost * play_cancel_mult)
-	if(card.data.card_type == "Energy"):
-		_update_player_energy(card.data.card_value * play_cancel_mult)
+	_update_player_values(-card.data.card_energy_cost * play_cancel_mult, -play_cancel_mult)
+	match(card.data.card_type):
+		"Energy":
+			_update_player_values(card.data.card_value * play_cancel_mult, 0)
+		"Draw":
+			if(is_playing): draw_card_to_from(card_hand, draw_pile, card.data.card_value * play_cancel_mult)
+			else: discard_card()
 
 
-## Updates player energy global.
-## Updates the hud to reflect changes.
-func _update_player_energy(energy_change : int) -> void:
+## Updates player energy global by [energy_change] and click global by [click_change].
+## Updates HUD to reflect changes.
+func _update_player_values(energy_change : int, click_change : int) -> void:
+	#update globals
 	PlayerVariables.curr_player_energy += energy_change
+	PlayerVariables.curr_player_clicks += click_change
+	#update the hud display
 	card_hud.energy_value = PlayerVariables.curr_player_energy #update the energy display
+	card_hud.click_value = PlayerVariables.curr_player_clicks #update the click display

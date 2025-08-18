@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dfd0m4j17khxb"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_1o7xb"]
+
+[resource]
+script = ExtResource("1_1o7xb")
+card_name = "Basic Draw"
+card_energy_cost = 0
+card_type = "Draw"
+card_value = 1
+card_body = "Draw 1 Card"
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

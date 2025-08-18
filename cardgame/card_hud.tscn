@@ -3,7 +3,7 @@
 [ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="1_er3yq"]
 [ext_resource type="Script" uid="uid://b3mdfspd235kg" path="res://cardgame/card_hud.gd" id="1_sc0sm"]
 
-[node name="CardHud" type="Control" node_paths=PackedStringArray("LockInButton", "EnergyButton", "DrawButton")]
+[node name="CardHud" type="Control" node_paths=PackedStringArray("_ClickValue", "_EnergyValue", "LockInButton", "EnergyButton", "DrawButton", "ActionButtons")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,24 +12,33 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_sc0sm")
+_ClickValue = NodePath("BLeftContainer/ClickContainer/ClickValue")
+_EnergyValue = NodePath("BLeftContainer/EnergyContainer/EnergyValue")
 LockInButton = NodePath("QueueContainer/LockInContainer/LOCKIN")
-EnergyButton = NodePath("GainEnergy")
-DrawButton = NodePath("DrawButton")
+EnergyButton = NodePath("ActionButtons/GainEnergy")
+DrawButton = NodePath("ActionButtons/DrawCard")
+ActionButtons = NodePath("ActionButtons")
 
-[node name="DrawButton" type="Button" parent="."]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
-
-[node name="GainEnergy" type="Button" parent="."]
-custom_minimum_size = Vector2(280, 40)
+[node name="ActionButtons" type="VBoxContainer" parent="."]
 layout_mode = 1
 offset_right = 280.0
-offset_bottom = 40.0
+offset_bottom = 84.0
+
+[node name="GainEnergy" type="Button" parent="ActionButtons"]
+custom_minimum_size = Vector2(280, 40)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme = ExtResource("1_er3yq")
-text = "Gain Energy (1c)"
+text = "(1c) -> (1e)"
+
+[node name="DrawCard" type="Button" parent="ActionButtons"]
+custom_minimum_size = Vector2(280, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource("1_er3yq")
+text = "(1c) -> (1d)"
 
 [node name="QueueContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -63,21 +72,41 @@ theme = ExtResource("1_er3yq")
 toggle_mode = true
 text = "LOCK IN"
 
-[node name="EnergyContainer" type="HBoxContainer" parent="."]
-layout_mode = 2
-offset_top = 621.0
-offset_right = 280.0
-offset_bottom = 648.0
+[node name="BLeftContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -27.0
 grow_vertical = 0
+
+[node name="ClickContainer" type="HBoxContainer" parent="BLeftContainer"]
+layout_mode = 2
 size_flags_vertical = 10
 
-[node name="EnergyTip" type="Label" parent="EnergyContainer"]
+[node name="ClickTip" type="Label" parent="BLeftContainer/ClickContainer"]
+layout_mode = 2
+theme = ExtResource("1_er3yq")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Clicks:"
+
+[node name="ClickValue" type="Label" parent="BLeftContainer/ClickContainer"]
+layout_mode = 2
+theme = ExtResource("1_er3yq")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "0"
+
+[node name="EnergyContainer" type="HBoxContainer" parent="BLeftContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="EnergyTip" type="Label" parent="BLeftContainer/EnergyContainer"]
 layout_mode = 2
 theme = ExtResource("1_er3yq")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Energy:"
 
-[node name="EnergyValue" type="Label" parent="EnergyContainer"]
+[node name="EnergyValue" type="Label" parent="BLeftContainer/EnergyContainer"]
 layout_mode = 2
 theme = ExtResource("1_er3yq")
 theme_override_colors/font_color = Color(1, 1, 1, 1)

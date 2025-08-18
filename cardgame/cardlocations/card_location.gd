@@ -10,12 +10,18 @@ var _card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_
 var is_interactable := true ## Whether hand should respond to input
 var _hide_flag := -1
 var _HIDE_OFFSET = Vector2.ZERO #would like to make this const, but children need to override it
+const _SHOW_HIDE_SPEED = 5
 @onready var _SHOW_POSITION = self.position
 
-var card_array_size : int: # Public property for _card_array.size(). Exists mostly to discourage external direct access of _card_array
+
+## Public property for _card_array.size().
+## Exists mostly to discourage external direct access of _card_array
+var card_array_size : int:
 	get:
 		return _card_array.size()
-var card_array_isfull : bool: # Public property for whether location can fit more cards. Always returns false by default.
+## Public property for whether location can fit more cards. Always returns false by default.
+## {OVERLOAD}
+var card_array_isfull : bool:
 	get:
 		return _card_array_isfull_helper()
 
@@ -45,22 +51,24 @@ func _card_array_isfull_helper() -> bool:
 	return false
 
 
-## Creates new card from given data, and places at top of the deck
-func create_card(data) -> void:
+## Creates new card from given [data], and places at top of the location. Returns the card.
+func create_card(data) -> Card2D:
 	var card : Card2D = _card_prefab.instantiate()
 	card.data = data
 	add_child(card)
 	add_card(card)
+	return card
 
 
-## Creates deck from decklist
+## Creates deck from decklist at [deck_name].json
 func create_from_decklist(deck_name : String) -> void:
 	var card_data_array = DeckListManager.load_deck_json(deck_name)
 	for card_data in card_data_array:
 		create_card(card_data)
 	shuffle_location()
 
-## Adds card to top of deck (or specified position)
+
+## Adds [card] to top of location (or specified [insert_position])
 func add_card(card, insert_position: int = -1) -> bool:
 	if(self.card_array_isfull):
 		return false
@@ -71,9 +79,9 @@ func add_card(card, insert_position: int = -1) -> bool:
 		_card_array.insert(insert_position,card) #insert the card into _card_array at position
 	_rearrange_cards()
 	return true
-	
-	
-## Draws a card from the top of the deck and returns it
+
+
+## Draws a card at [card_array_position] and returns it
 func draw_card(card_array_position : int = -1) -> Card2D:
 	if _card_array.is_empty() or card_array_position > card_array_size:
 		return
@@ -90,7 +98,7 @@ func draw_card(card_array_position : int = -1) -> Card2D:
 	return ret_card
 
 
-## Removes card from hand at passed position.
+## Removes [card] from location at passed position.
 func draw_specific_card(card : Card2D) -> Card2D:
 	if _card_array.size() <= 0:
 		return
@@ -114,7 +122,7 @@ func _rearrange_cards() -> void:
 	#TODO: emit a rearrangement sound (maybe should be in _rearrange_helper, actually??)
 
 
-## Performs the actual rearrangement
+## Performs the actual rearrangement of each [card] at [curr_card_index]
 ## {OVERLOAD}
 func _rearrange_helper(_card : Card2D, _curr_card_index : int) -> void:
 	pass
@@ -122,7 +130,6 @@ func _rearrange_helper(_card : Card2D, _curr_card_index : int) -> void:
 
 
 ## Shuffles all the cards in a location
-# TODO
 func shuffle_location() -> void:
 	_card_array.shuffle()
 
@@ -142,7 +149,6 @@ func show_location() -> void:
 	
 	
 ## Performs screen hide/show
-const _SHOW_HIDE_SPEED = 5
 func _show_hide_helper(delta) -> void:
 	if(_hide_flag < 0):
 		return

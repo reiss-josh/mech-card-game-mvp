@@ -20,4 +20,7 @@ deck_position_offset = 2
 
 [node name="CardQueue" parent="." instance=ExtResource("4_5wq22")]
 
+[node name="DrawQueue" parent="." instance=ExtResource("4_5wq22")]
+left_to_right = -1
+
 [node name="CardHud" parent="." instance=ExtResource("5_5wq22")]
