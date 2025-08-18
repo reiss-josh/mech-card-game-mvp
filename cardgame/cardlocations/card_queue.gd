@@ -1,7 +1,6 @@
 extends CardLocation
 class_name CardQueue
 
-var energy_card_data = load("res://cardgame/cards/uniquecards/basic_energy.tres")
 
 ## Function for rearranging screen position on _ready
 #TODO
@@ -30,9 +29,3 @@ func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
 	card.z_index = 5
 	card.move_to(Vector2(dist_from_center * _CARD_BUFFER.x, 0), Global.CARD_QUEUE_SCALE)
 	card.rotation = 0
-
-
-
-func add_energy_card() -> void:
-	self.create_card(energy_card_data)
-	pass
