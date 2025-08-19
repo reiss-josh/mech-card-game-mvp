@@ -55,6 +55,7 @@ z_index = -10
 custom_minimum_size = Vector2(0, 157.5)
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 1
 color = Color(0.381703, 0.381703, 0.381703, 1)
 
 [node name="LockInContainer" type="MarginContainer" parent="QueueContainer"]

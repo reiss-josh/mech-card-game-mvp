@@ -14,6 +14,8 @@ var need_highlight = false
 @onready var _last_transform := self.transform
 @onready var start_scale : Vector2 = self.scale
 @onready var _last_z_index : int = self.z_index
+var _highlight_transform_y_offset = 0.0
+var _highlight_transform_scale_offset = 1.0
 # variables for movement/scaling
 var need_move := false
 const _MOVE_POSITION_SPEED := 6
@@ -95,9 +97,9 @@ func start_highlight() -> void:
 	#set new visuals
 	var newTransform := Transform2D (
 		0, #rotation
-		start_scale * _HIGHLIGHT_SCALE_FACTOR, #scale
+		start_scale * _HIGHLIGHT_SCALE_FACTOR * _highlight_transform_scale_offset, #scale
 		self.skew, #skew
-		Vector2(self.position.x, -(1 + Global.CARD_SIZE.y/2)) #position
+		Vector2(self.position.x, _highlight_transform_y_offset) #position
 	)
 	_update_appearance(newTransform, _HIGHLIGHT_Z_INDEX)
 
@@ -114,3 +116,8 @@ func end_highlight() -> void:
 func _update_appearance(new_transform : Transform2D, new_z_index : int) -> void:
 	self.transform = new_transform
 	self.z_index = new_z_index
+
+
+func update_highlight_transform(scale_factor : float, y_offset : float) -> void:
+	_highlight_transform_y_offset = y_offset
+	_highlight_transform_scale_offset = scale_factor

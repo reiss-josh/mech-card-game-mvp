@@ -2,8 +2,8 @@ extends Node
 class_name CardGame
 
 var basic_attack_data = load("res://cardgame/cards/uniquecards/basic_attack.tres")
-var energy_card_data = load("res://cardgame/cards/uniquecards/basic_energy.tres")
-var draw_card_data = load("res://cardgame/cards/uniquecards/basic_draw.tres")
+var energy_card_data = load("res://cardgame/cards/uniquecards/ui_energy.tres")
+var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
 #store our card locations
 @onready var card_hand : CardLocation = get_node("CardHand")
 @onready var draw_pile : CardLocation = get_node("DrawPile")
@@ -110,7 +110,10 @@ func _on_card_selected(card : Card2D) -> void:
 	# if we're not in discard mode, we continue the regular card playing procedure:
 	if(_card_can_be_played(card)): # check if card can be played
 		card_hand.draw_specific_card(card)
-		card_queue.add_card(card)
+		if(card.data.card_type == "Draw"):
+			draw_queue.add_card(card)
+		else:
+			card_queue.add_card(card)
 		_play_card(card) # place the card in play area, pay relevant costs
 	else:
 		card_hand.fail_interaction(card)
@@ -138,9 +141,6 @@ func _on_gain_energy_clicked() -> void:
 	if(card_queue.card_array_isfull):
 		return
 	_play_card(card_queue.create_card(energy_card_data))
-	#_update_player_energy(1)
-	#if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
-	#	_prepare_cancel_lockin(true)
 
 
 ## Draws a card into the hand when signalled by UI

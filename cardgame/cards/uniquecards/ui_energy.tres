@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_rh7dn")
-card_name = "Basic Energy"
+card_name = "UI Energy"
 card_energy_cost = 0
 card_type = "Energy"
 card_value = 1

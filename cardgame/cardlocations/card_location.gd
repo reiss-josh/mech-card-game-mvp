@@ -5,17 +5,23 @@ class_name CardLocation
 ## Any card_2D objects passed in must be preloaded with card_data
 ## When creating a CardLocation class overload the _self_positioning(), _card_removal_unique(), and _rearrange_helper() methods
 
+#variables for card array
 var _card_array : Array[Card2D] = [] ## Array of cards in hand
 var _card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
-var is_interactable := true ## Whether hand should respond to input
+#variables for show/hide
 var _hide_flag := -1
 var _HIDE_OFFSET = Vector2.ZERO #would like to make this const, but children need to override it
 const _SHOW_HIDE_SPEED = 5
 @onready var _SHOW_POSITION = self.position
+# Variables for card interaction management
+var _is_interactable_type := false ## Whether location is capable of responding to input
+var is_interactable := false ## Whether location should currently respond to input
+var _card_interaction_queued_event = null ## input event for highest-indexed card interacted with this frame
+var _card_interaction_queued_location_position : int = -1 ## highest-position card interacted with this frame
 
-
+# card array externals
 ## Public property for _card_array.size().
-## Exists mostly to discourage external direct access of _card_array
+# Exists mostly to discourage external direct access of _card_array
 var card_array_size : int:
 	get:
 		return _card_array.size()
@@ -26,21 +32,25 @@ var card_array_isfull : bool:
 		return _card_array_isfull_helper()
 
 
+## Perform custom setup, set interactable, set _SHOW_POSITION, set position with _HIDE_OFFSET
 func _ready() -> void:
-	is_interactable = true
-	_self_positioning()
+	_self_setup()
+	is_interactable = _is_interactable_type
 	_SHOW_POSITION = self.position
 	self.position = _SHOW_POSITION + _HIDE_OFFSET #set to hidden by default
-	
-	
+
+
+## Perform interactions, perform show/hide animation
 func _process(delta) -> void:
+	if is_interactable and _card_interaction_queued_event != null: #check and resolve card queue
+		_resolve_card_interaction_queue.call_deferred(_card_array[_card_interaction_queued_location_position], _card_interaction_queued_event)
 	if _hide_flag >= 0:
 		_show_hide_helper(delta)
 
 
 ## Function for rearranging screen position on _ready
 ## {OVERLOAD}
-func _self_positioning() -> void:
+func _self_setup() -> void:
 	pass
 
 
@@ -49,6 +59,14 @@ func _self_positioning() -> void:
 # Exists to be overridden by card_queue
 func _card_array_isfull_helper() -> bool:
 	return false
+
+
+## Creates deck from decklist at [deck_name].json
+func create_from_decklist(deck_name : String) -> void:
+	var card_data_array = DeckListManager.load_deck_json(deck_name)
+	for card_data in card_data_array:
+		create_card(card_data)
+	shuffle_location()
 
 
 ## Creates new card from given [data], and places at top of the location. Returns the card.
@@ -60,14 +78,6 @@ func create_card(data) -> Card2D:
 	return card
 
 
-## Creates deck from decklist at [deck_name].json
-func create_from_decklist(deck_name : String) -> void:
-	var card_data_array = DeckListManager.load_deck_json(deck_name)
-	for card_data in card_data_array:
-		create_card(card_data)
-	shuffle_location()
-
-
 ## Adds [card] to top of location (or specified [insert_position])
 func add_card(card, insert_position: int = -1) -> bool:
 	if(self.card_array_isfull):
@@ -77,6 +87,7 @@ func add_card(card, insert_position: int = -1) -> bool:
 		_card_array.append(card)
 	else:
 		_card_array.insert(insert_position,card) #insert the card into _card_array at position
+	_card_addition_unique(insert_position, card)
 	_rearrange_cards()
 	return true
 
@@ -109,9 +120,15 @@ func draw_specific_card(card : Card2D) -> Card2D:
 		return
 
 
+## Special function to be overrloaded by special methods for children on card addition
+## {OVERLOAD}
+func _card_addition_unique(_card_array_position: int, _card : Card2D) -> void:
+	pass
+
+
 ## Special function to be overrloaded by special methods for children on card removal
 ## {OVERLOAD}
-func _card_removal_unique(_card_array_position: int, _ret_card : Card2D) -> void:
+func _card_removal_unique(_card_array_position: int, _card : Card2D) -> void:
 	pass
 
 
@@ -126,7 +143,6 @@ func _rearrange_cards() -> void:
 ## {OVERLOAD}
 func _rearrange_helper(_card : Card2D, _curr_card_index : int) -> void:
 	pass
-	
 
 
 ## Shuffles all the cards in a location
@@ -144,7 +160,7 @@ func hide_location() -> void:
 ## Moves location onscreen
 func show_location() -> void:
 	_hide_flag = 0
-	is_interactable = true
+	is_interactable = _is_interactable_type
 	#TODO: play a start-movement sound
 	
 	
@@ -169,3 +185,32 @@ func _show_hide_helper(delta) -> void:
 		position = target_position
 		_hide_flag = -1
 		#TODO: emit a movement-finished sound?
+
+
+## Enqueues input events from generic 2d_input_event signals
+func _on_card_input_event(_viewport, event, _shape_idx, card : Card2D) -> void:
+	if(is_interactable and card.need_move == false):
+		_attempt_card_interaction_enqueue(card, event)
+
+
+## Attempts to enqueue event from card for interaction this frame
+## Compares against currently enqueued events, if any exist, to ensure the highest card in hand is preferred
+## (Also handles certain special cases)
+func _attempt_card_interaction_enqueue(card : Card2D, event) -> void:
+	# Enqueue if any of the following:
+	# 	case 1: card is highest in the location
+	# 	case 2: card is tied for highest position, and event is a String (overrides clicks/mouse movements with custom events)
+	var card_queue_pos = _card_array.find(card)
+	if ((card_queue_pos > _card_interaction_queued_location_position) or #case1
+		((card_queue_pos == _card_interaction_queued_location_position) and (event is String))): #case2
+		_card_interaction_queued_location_position = card_queue_pos
+		_card_interaction_queued_event = event
+	# if card is currently highlighted, but didn't get enqueued this frame, end the highlight.
+	elif card_queue_pos != _card_interaction_queued_location_position and card.need_highlight == true:
+		card.end_highlight()
+
+
+## Performs the input event associated with the card which is highest up in the location
+## {OVERRIDE}
+func _resolve_card_interaction_queue(_card : Card2D, _event) -> void:
+	pass

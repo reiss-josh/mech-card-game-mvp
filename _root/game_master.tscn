@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dn36us8j2emdq"]
 
-[ext_resource type="Script" uid="uid://dl5ttc3emdvi4" path="res://game_master.gd" id="1_5yk56"]
+[ext_resource type="Script" uid="uid://dl5ttc3emdvi4" path="res://_root/game_master.gd" id="1_5yk56"]
 [ext_resource type="PackedScene" uid="uid://1ljxcqaqdghv" path="res://cardgame/card_game.tscn" id="2_yy1gc"]
 
 [node name="GameMaster" type="Node"]
