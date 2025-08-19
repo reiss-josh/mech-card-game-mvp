@@ -12,7 +12,7 @@ signal card_selected(card : Card2D) ## signal for card being played
 func _self_setup() -> void:
 	var screen_size := get_viewport_rect().size
 	position.x = screen_size.x * 1/2
-	position.y = screen_size.y * .99
+	position.y = screen_size.y
 	_HIDE_OFFSET = Vector2(0, Global.CARD_SIZE.y) #would like to make this const, but children need to override it
 	_is_interactable_type = true
 
@@ -30,6 +30,8 @@ func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
 
 ## Update last_hand_position, connect signals
 ## {OVERRIDE}
+const HAND_HIGHLIGHT_FACTOR = 1.1
+const HAND_HIGHLIGHT_Y_OFFSET = -(Global.CARD_SIZE.y * HAND_HIGHLIGHT_FACTOR/2)
 func _card_addition_unique(insert_position : int, card: Card2D) -> void:
 	if insert_position > _card_array.size() or insert_position < 0: #if card does not have a last_hand_position, set it to match the rightmost edge of the hand
 		card.last_hand_position = _card_array.size()
@@ -38,8 +40,7 @@ func _card_addition_unique(insert_position : int, card: Card2D) -> void:
 	card.get_node("CardCollisionArea").input_event.connect(_on_card_input_event.bind(card))
 	card.get_node("CardCollisionArea").mouse_entered.connect(_on_card_input_event.bind(null, "mouse_entered", null, card))
 	card.get_node("CardCollisionArea").mouse_exited.connect(_on_card_input_event.bind(null, "mouse_exited", null, card))
-	card.update_highlight_transform(1.0, -(1 + Global.CARD_SIZE.y / 2))
-
+	card.update_highlight_transform(HAND_HIGHLIGHT_FACTOR, HAND_HIGHLIGHT_Y_OFFSET)
 
 ## Updates last_hand_position, disconnect signals
 ## {OVERRIDE}

@@ -8,6 +8,7 @@ var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
 @onready var card_hand : CardLocation = get_node("CardHand")
 @onready var draw_pile : CardLocation = get_node("DrawPile")
 @onready var discard_pile : CardLocation = get_node("DiscardPile")
+@onready var play_pile : CardLocation = get_node("PlayPile")
 @onready var card_queue : CardLocation = get_node("CardQueue")
 @onready var draw_queue : CardLocation = get_node("DrawQueue")
 @onready var card_hud : CardHud = $CardHud
@@ -95,6 +96,8 @@ func end_turn() -> void:
 	# update HUD
 	card_hud.LockInButton.visible = false
 	card_hud.LockInButton.button_pressed = false
+	#dump the draw queue
+	draw_queue.dump_card_array()
 
 
 ## Handles [card] being clicked
@@ -109,11 +112,6 @@ func _on_card_selected(card : Card2D) -> void:
 		return
 	# if we're not in discard mode, we continue the regular card playing procedure:
 	if(_card_can_be_played(card)): # check if card can be played
-		card_hand.draw_specific_card(card)
-		if(card.data.card_type == "Draw"):
-			draw_queue.add_card(card)
-		else:
-			card_queue.add_card(card)
 		_play_card(card) # place the card in play area, pay relevant costs
 	else:
 		card_hand.fail_interaction(card)
@@ -129,8 +127,13 @@ func _card_can_be_played(card : Card2D) -> bool:
 
 ## Plays [card] to the queue, and handles any interactions
 func _play_card(card : Card2D) -> void:
-	#card_hand.draw_specific_card(card) #pull the card out of the hand
-	#card_queue.add_card(card) #play the card to the queue
+	card_hand.draw_specific_card(card)
+	if(card.data.card_type == "Draw"):
+		draw_queue.add_card(card)
+	elif(card.data.card_type == "Play"):
+		play_pile.add_card(card)
+	else:
+		card_queue.add_card(card)
 	manage_card_play_cancel(card, true)
 	if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
 		_prepare_cancel_lockin(true)
@@ -140,14 +143,14 @@ func _play_card(card : Card2D) -> void:
 func _on_gain_energy_clicked() -> void:
 	if(card_queue.card_array_isfull):
 		return
-	_play_card(card_queue.create_card(energy_card_data))
+	_play_card(card_hand.create_card(energy_card_data))
 
 
 ## Draws a card into the hand when signalled by UI
 func _on_draw_card_clicked() -> void:
 	if(card_queue.card_array_isfull):
 		return
-	_play_card(draw_queue.create_card(draw_card_data))
+	_play_card(card_hand.create_card(draw_card_data))
 
 
 ## Handls CardHud signalling that we've LOCKED IN

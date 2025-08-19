@@ -8,11 +8,9 @@ var debug_name := ""
 # Card's last hand position, if applicable
 var last_hand_position : int = -1
 # variables for highlighting
-const _HIGHLIGHT_SCALE_FACTOR := 1.1
 const _HIGHLIGHT_Z_INDEX := 50
 var need_highlight = false
 @onready var _last_transform := self.transform
-@onready var start_scale : Vector2 = self.scale
 @onready var _last_z_index : int = self.z_index
 var _highlight_transform_y_offset = 0.0
 var _highlight_transform_scale_offset = 1.0
@@ -53,14 +51,14 @@ func _process(delta) -> void:
 		move_to_helper(delta)
 
 
-## Takes a position and sets that as card's new target position
-func move_to(new_target_position : Vector2, new_target_scale : float = -1.0) -> void:
+## Takes [new_target_position] and [new_target_scale_factor], and sets those as targets for the card.
+func move_to(new_target_position : Vector2, new_target_scale_factor : float = -1.0) -> void:
 	target_position = new_target_position
 	need_move = true
-	if(new_target_scale >= 0.0):
-		target_scale = new_target_scale * start_scale
+	if(new_target_scale_factor >= 0.0):
+		target_scale = new_target_scale_factor * Global.CARD_START_SCALE
 	else:
-		target_scale = start_scale
+		target_scale = Global.CARD_START_SCALE
 	#TODO: play a start-movement sound
 
 
@@ -97,7 +95,7 @@ func start_highlight() -> void:
 	#set new visuals
 	var newTransform := Transform2D (
 		0, #rotation
-		start_scale * _HIGHLIGHT_SCALE_FACTOR * _highlight_transform_scale_offset, #scale
+		self.scale * _highlight_transform_scale_offset, #scale
 		self.skew, #skew
 		Vector2(self.position.x, _highlight_transform_y_offset) #position
 	)

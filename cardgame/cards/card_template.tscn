@@ -9,8 +9,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -1170.0
-offset_bottom = -30.0
+offset_right = -402.0
+offset_bottom = 402.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -75,3 +75,44 @@ theme = ExtResource("2_ahfly")
 text = "CardType"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MiddleLineContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MiddleLine-Black" type="ColorRect" parent="MiddleLineContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+offset_top = 520.0
+offset_right = 750.0
+offset_bottom = 530.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+color = Color(0, 0, 0, 1)
+
+[node name="MiddleLine-Blue" type="ColorRect" parent="MiddleLineContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+offset_top = 522.0
+offset_right = 750.0
+offset_bottom = 527.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+color = Color(0, 0.408227, 0.894286, 1)
+
+[node name="MiddleLine-Red" type="ColorRect" parent="MiddleLineContainer"]
+custom_minimum_size = Vector2(0, 2.5)
+layout_mode = 2
+offset_top = 523.0
+offset_right = 750.0
+offset_bottom = 525.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+color = Color(0.826338, 0, 0.11068, 1)

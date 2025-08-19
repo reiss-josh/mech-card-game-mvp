@@ -214,3 +214,10 @@ func _attempt_card_interaction_enqueue(card : Card2D, event) -> void:
 ## {OVERRIDE}
 func _resolve_card_interaction_queue(_card : Card2D, _event) -> void:
 	pass
+
+
+## Deletes every card in _card_array
+func dump_card_array() -> void:
+	for card in _card_array:
+		card.free()
+	_card_array = []

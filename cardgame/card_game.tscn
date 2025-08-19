@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://1ljxcqaqdghv"]
+[gd_scene load_steps=7 format=3 uid="uid://1ljxcqaqdghv"]
 
 [ext_resource type="Script" uid="uid://caff5hmqdqiv1" path="res://cardgame/card_game.gd" id="1_csu0h"]
-[ext_resource type="PackedScene" uid="uid://jqw11grojyyk" path="res://cardgame/cardlocations/card_hand.tscn" id="2_p03o1"]
-[ext_resource type="PackedScene" uid="uid://jh0h85adqssa" path="res://cardgame/cardlocations/card_queue.tscn" id="4_5wq22"]
-[ext_resource type="PackedScene" uid="uid://1w4nv0lg3dtj" path="res://cardgame/cardlocations/card_deck_physical.tscn" id="4_p03o1"]
+[ext_resource type="PackedScene" uid="uid://jqw11grojyyk" path="res://cardgame/cardlocations/scenes/card_hand.tscn" id="2_p03o1"]
+[ext_resource type="PackedScene" uid="uid://jh0h85adqssa" path="res://cardgame/cardlocations/scenes/card_queue.tscn" id="4_5wq22"]
+[ext_resource type="PackedScene" uid="uid://1w4nv0lg3dtj" path="res://cardgame/cardlocations/scenes/card_deck_physical.tscn" id="4_p03o1"]
+[ext_resource type="PackedScene" uid="uid://d1caihj548e3a" path="res://cardgame/cardlocations/scenes/card_play_area.tscn" id="4_s1omh"]
 [ext_resource type="PackedScene" uid="uid://ctwwril538mrt" path="res://cardgame/card_hud.tscn" id="5_5wq22"]
 
 [node name="CardGame" type="Node"]
@@ -17,6 +18,8 @@ position = Vector2(1063, 589)
 
 [node name="DiscardPile" parent="." instance=ExtResource("4_p03o1")]
 deck_position_offset = 2
+
+[node name="PlayPile" parent="." instance=ExtResource("4_s1omh")]
 
 [node name="CardQueue" parent="." instance=ExtResource("4_5wq22")]
 
