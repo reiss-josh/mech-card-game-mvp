@@ -24,7 +24,7 @@ func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
 	var middle_card_index := ((_card_array.size() + 1) / 2.0) - 1.0 # get index of middle card (or index between middle two cards)
 	var dist_from_center := curr_card_index - middle_card_index
 	card.z_index = floor(dist_from_center)
-	card.move_to(Vector2(dist_from_center * _CARD_BUFFER.x / _card_array.size(), abs(dist_from_center) * _CARD_BUFFER.y / _card_array.size()))
+	card.move_and_scale(Vector2(dist_from_center * _CARD_BUFFER.x / _card_array.size(), abs(dist_from_center) * _CARD_BUFFER.y / _card_array.size()))
 	card.rotation = lerpf(0, TAU/18, dist_from_center / _card_array.size())
 
 
@@ -61,12 +61,12 @@ func _resolve_card_interaction_queue(card : Card2D, event) -> void:
 	#handle mouse entry/exit
 	elif event is String:
 		if event == "mouse_entered":
-			card.start_highlight()
+			self.start_highlight(card)
 		elif event == "mouse_exited":
 			card.end_highlight()
 	#handle mouse motion
 	elif event is InputEventMouseMotion:
-		card.start_highlight()
+		self.start_highlight(card)
 	#reset the card queue variables
 	_card_interaction_queued_location_position = -1
 	_card_interaction_queued_event = null

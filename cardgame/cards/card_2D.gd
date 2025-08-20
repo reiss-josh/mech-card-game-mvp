@@ -2,7 +2,7 @@ extends Node2D
 class_name Card2D
 
 # variables for carddata structure
-var _card_data_dict := {}
+var _card_hud_elts_dict := {}
 var debug_name := ""
 #const CARD_SIZE := Vector2(0.3*750, 0.3*1050)
 # Card's last hand position, if applicable
@@ -15,14 +15,13 @@ var need_highlight = false
 var _highlight_transform_y_offset = 0.0
 var _highlight_transform_scale_offset = 1.0
 # variables for movement/scaling
+const _MOVE_SCALE_SPEED = 2
 var need_move := false
-const _MOVE_POSITION_SPEED := 6
-@onready var target_position : Vector2 = self.position
-@onready var target_scale : Vector2 = self.scale
 signal arrived()
+#for clickable cards
 
 
-# manage cardData structure
+## Manages cardData structure
 @export var data:CardData:
 	set(value):
 		var card_template = $"CardViewport/CardTemplate"
@@ -30,58 +29,44 @@ signal arrived()
 		# check if we actually received any data
 		if(data != null):
 			# check if we've ever saved data for this card before
-			if (_card_data_dict.is_empty()):
+			if (_card_hud_elts_dict.is_empty()):
 				# find references and save
-				_card_data_dict["Name"] = card_template.find_child("Name")
-				_card_data_dict["EnergyCost"] = card_template.find_child("EnergyCost")
-				_card_data_dict["CardBody"] = card_template.find_child("CardBody")
-				_card_data_dict["CardType"] = card_template.find_child("CardType")
-				#_card_data_dict["CardValue"] = card_template.find_child("CardValue")
+				_card_hud_elts_dict["Name"] = card_template.find_child("Name")
+				_card_hud_elts_dict["EnergyCost"] = card_template.find_child("EnergyCost")
+				_card_hud_elts_dict["CardBody"] = card_template.find_child("CardBody")
+				_card_hud_elts_dict["CardType"] = card_template.find_child("CardType")
+				_card_hud_elts_dict["ClickButton"] = card_template.find_child("ClickButton")
+				_card_hud_elts_dict["LoadContainer"] = card_template.find_child("LoadContainer")
+				_card_hud_elts_dict["LoadValue"] = card_template.find_child("LoadValue")
+				#_card_hud_elts_dict["CardValue"] = card_template.find_child("CardValue")
 			# save to existing references
-			_card_data_dict["Name"].text = data.card_name
-			_card_data_dict["EnergyCost"].text = str(data.card_energy_cost)
-			_card_data_dict["CardBody"].text = data.card_body
-			_card_data_dict["CardType"].text = data.card_type
-			#_card_data_dict["CardValue"].text = data.card_value
+			_card_hud_elts_dict["Name"].text = data.card_name
+			_card_hud_elts_dict["EnergyCost"].text = str(data.card_energy_cost)
+			_card_hud_elts_dict["CardBody"].text = data.card_body
+			_card_hud_elts_dict["CardType"].text = data.card_type
+			#_card_hud_elts_dict["CardValue"].text = data.card_value
 			debug_name = data.card_name
+			if(data.card_is_clickable):
+				_card_hud_elts_dict["CardButton"].connect(_on_card_clicked)
 
 
-func _process(delta) -> void:
-	if(need_move):
-		move_to_helper(delta)
-
-
-## Takes [new_target_position] and [new_target_scale_factor], and sets those as targets for the card.
-func move_to(new_target_position : Vector2, new_target_scale_factor : float = -1.0) -> void:
-	target_position = new_target_position
-	need_move = true
-	if(new_target_scale_factor >= 0.0):
-		target_scale = new_target_scale_factor * Global.CARD_START_SCALE
-	else:
-		target_scale = Global.CARD_START_SCALE
+## Tweens position to [target_position], and scale to [target_scale_factor]
+func move_and_scale(target_position : Vector2, target_scale_factor : float = -1.0) -> void:
+	var target_scale : Vector2 = Global.CARD_START_SCALE
+	if(target_scale_factor >= 0.0):
+		target_scale = target_scale_factor * Global.CARD_START_SCALE
 	#TODO: play a start-movement sound
-
-
-## Lerps card from current position to target position
-func move_to_helper(delta) -> void:
-	# check if we're close yet
-	var distance_remaining = abs((position.x + position.y) - (target_position.x + target_position.y))
-	if(distance_remaining > _MOVE_POSITION_SPEED*2 * target_scale.x):
-		var weight = 1 - exp(-_MOVE_POSITION_SPEED * delta)
-		position = position.lerp(target_position, weight)
-		scale = scale.lerp(target_scale, weight)
-	# if we're almost there, square our movement speed
-	elif(distance_remaining > 0.1 * target_scale.x):
-		var weight = 1 - exp(-(_MOVE_POSITION_SPEED*_MOVE_POSITION_SPEED) * delta)
-		position = position.lerp(target_position, weight)
-		scale = scale.lerp(target_scale, weight)
-	# if we've arrived, update flags and snap position
-	else:
-		position = target_position
-		scale = target_scale
-		need_move = false
-		arrived.emit()
-		#TODO: emit a movement-finished sound?
+	var move_scale_tween = create_tween()
+	move_scale_tween.set_parallel()
+	move_scale_tween.tween_property(self, "position", target_position, 1.0/_MOVE_SCALE_SPEED
+		).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
+	move_scale_tween.tween_property(self, "scale", target_scale, 1.0/_MOVE_SCALE_SPEED
+		).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
+	need_move = true
+	await move_scale_tween.finished
+	need_move = false
+	arrived.emit()
+	#TODO: play a finished-movemnet sound (?)
 
 
 ## Highlights the card if it isn't already highlighted
@@ -93,13 +78,13 @@ func start_highlight() -> void:
 	_last_z_index = z_index
 	_last_transform = self.transform
 	#set new visuals
-	var newTransform := Transform2D (
+	var new_transform := Transform2D (
 		0, #rotation
 		self.scale * _highlight_transform_scale_offset, #scale
 		self.skew, #skew
 		Vector2(self.position.x, _highlight_transform_y_offset) #position
 	)
-	_update_appearance(newTransform, _HIGHLIGHT_Z_INDEX)
+	_update_appearance(new_transform, _HIGHLIGHT_Z_INDEX)
 
 
 ## Ends highlight for the card
@@ -110,12 +95,57 @@ func end_highlight() -> void:
 	_update_appearance(_last_transform, _last_z_index)
 
 
-## Updates appearance (helper for highlight functions above)
+## Updates appearance to match [new_transform] and [new_z_index]
+#(helper for highlight functions above)
 func _update_appearance(new_transform : Transform2D, new_z_index : int) -> void:
 	self.transform = new_transform
 	self.z_index = new_z_index
 
 
+## Updates the properties of the highlight transform by [scale_factor] and [y_offset]
 func update_highlight_transform(scale_factor : float, y_offset : float) -> void:
 	_highlight_transform_y_offset = y_offset
 	_highlight_transform_scale_offset = scale_factor
+
+
+## Loads card to start value. Returns loaded amount.
+func prep_load_card() -> int:
+	if(_card_hud_elts_dict["LoadContainer"].visible == false):
+		_card_hud_elts_dict["LoadContainer"].visible = true
+	_card_hud_elts_dict["LoadValue"].text = str(data.card_load_start_value)
+	return data.card_load_start_value
+
+
+## Unloads/loads card by its card_unload_increment / card_load_increment. Returns new current value.
+## If [is_loading] = {true}, we load. Else, we unload.
+func load_unload_card_inc(is_loading : bool = false) -> int:
+	var curr_value = int(_card_hud_elts_dict["LoadValue"].text)
+	if(is_loading):
+		curr_value += data.card_load_increment
+	else:
+		curr_value -= data.card_unload_increment
+	if(curr_value < 0):
+		curr_value = 0
+	_card_hud_elts_dict["LoadValue"].text = str(curr_value)
+	return curr_value
+
+
+## Sets up card for being played in the PlayArea
+func handle_play_card() -> void:
+	if(!data.card_is_persistent):
+		return
+	if(data.card_is_clickable):
+		_card_hud_elts_dict["ClickButton"].visible = true
+	if(data.card_loads_on_play):
+		prep_load_card()
+
+
+## Handles removing card from the PlayArea
+func handle_unplay_card() -> void:
+	if(data.card_is_clickable): _card_hud_elts_dict["ClickButton"].visible = false
+	if(data.card_is_loadable): _card_hud_elts_dict["LoadContainer"].visible = false
+
+
+## Handles card being clicked
+func _on_card_clicked() -> void:
+	pass

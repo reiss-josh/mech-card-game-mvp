@@ -16,5 +16,5 @@ const _CARD_BUFFER = Vector2(10,0) ## distance cards should be apart from eachot
 func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
 	var dist_from_top := card_array_size-1 - curr_card_index # determine our index distance from the middle card
 	card.z_index = curr_card_index
-	card.move_to(Vector2(0, dist_from_top * _CARD_BUFFER.x))
+	card.move_and_scale(Vector2(0, dist_from_top * _CARD_BUFFER.x))
 	card.rotation = 0

@@ -1,9 +1,11 @@
 extends Node
 class_name CardGame
 
+#card data
 var basic_attack_data = load("res://cardgame/cards/uniquecards/basic_attack.tres")
 var energy_card_data = load("res://cardgame/cards/uniquecards/ui_energy.tres")
 var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
+var deck_list_name : String = "basic_deck"
 #store our card locations
 @onready var card_hand : CardLocation = get_node("CardHand")
 @onready var draw_pile : CardLocation = get_node("DrawPile")
@@ -12,20 +14,23 @@ var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
 @onready var card_queue : CardLocation = get_node("CardQueue")
 @onready var draw_queue : CardLocation = get_node("DrawQueue")
 @onready var card_hud : CardHud = $CardHud
+#for locking in
 var _prepared_lockin : bool = false
 var _discard_mode : bool = false
 signal locked_in(queue_array) #signals to GameMaster that we're ready to play
 
 
+## Fills up the draw deck, connects child signals, draws starting hand, then calls start_turn()
 func _ready() -> void:
 	#set up our deck
-	draw_pile.create_from_decklist("basic_deck")
+	draw_pile.create_from_decklist(deck_list_name)
 	#fill up our hand to hand size
+	_connect_child_signals()
 	draw_card_to_from(card_hand, draw_pile, PlayerVariables.max_player_hand_size)
 	start_turn()
-	_connect_child_signals()
 
 
+## Handles debug inputs
 func _process(_delta) -> void:
 	if Input.is_action_just_pressed("DrawCard"):
 		draw_card_to_from(card_hand, draw_pile)
@@ -91,12 +96,11 @@ func end_turn() -> void:
 		card_hand.show_location()
 		_discard_mode = true
 		return
-	
-	# do the rest of the end-turn stuff
+	# Otherwise, do the rest of the end-turn stuff
 	# update HUD
 	card_hud.LockInButton.visible = false
 	card_hud.LockInButton.button_pressed = false
-	#dump the draw queue
+	#dump the draw queue -- TODO: make this animate
 	draw_queue.dump_card_array()
 
 
@@ -105,6 +109,7 @@ func _on_card_selected(card : Card2D) -> void:
 	# check if we're in discard mode -- if so, try to discard, then see if we can end the turn.
 	if(_discard_mode):
 		discard_specific_card(card)
+		await card.arrived
 		if(card_hand.card_array_size <= PlayerVariables.max_player_hand_size): #check if we can end the turn yet
 			_discard_mode = false
 			card_hand.hide_location()
@@ -134,6 +139,7 @@ func _play_card(card : Card2D) -> void:
 		play_pile.add_card(card)
 	else:
 		card_queue.add_card(card)
+	await card.arrived
 	manage_card_play_cancel(card, true)
 	if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
 		_prepare_cancel_lockin(true)
@@ -175,6 +181,7 @@ func _undo_last_queue()-> void:
 		last_queued_card.free()
 	else:
 		card_hand.add_card(last_queued_card)
+		await last_queued_card.arrived
 	
 	#if removing this card cancels our lockin,
 	if(_prepared_lockin):
