@@ -40,6 +40,9 @@ func _process(_delta) -> void:
 		draw_pile.create_card(basic_attack_data)
 	if Input.is_action_just_pressed("DiscardCard"):
 		discard_card()
+	if Input.is_action_just_pressed("StartTurn"):
+		card_queue.dump_card_array()
+		start_turn()
 
 
 ## Connects all the necessary signals from children
@@ -48,6 +51,8 @@ func _connect_child_signals():
 	card_hud.LockInButton.pressed.connect(_on_lockin_clicked)
 	card_hud.EnergyButton.pressed.connect(_on_gain_energy_clicked)
 	card_hud.DrawButton.pressed.connect(_on_draw_card_clicked)
+	play_pile.request_discard.connect(discard_specific_card.bind(play_pile))
+	play_pile.card_effect.connect(handle_card_effect)
 
 
 ## Draws a card to [destination] from [source] (defaults to draw_pile)
@@ -71,11 +76,11 @@ func discard_card(hand_position : int = -1) -> void:
 	discard_pile.add_card(card)
 
 
-## Discards specifically requested [card] from the card hand
-func discard_specific_card(card : Card2D) -> void:
+## Discards specifically requested [card] from the card [location] (defaults to hand)
+func discard_specific_card(card : Card2D, location : CardLocation = card_hand) -> void:
 	if card_hand.card_array_size <= 0:
 		return
-	card_hand.draw_specific_card(card)
+	location.draw_specific_card(card)
 	card.last_hand_position = -1
 	discard_pile.add_card(card)
 
@@ -83,10 +88,11 @@ func discard_specific_card(card : Card2D) -> void:
 ## Makes hand visible, makes buttons visible, draws a card from the deck
 func start_turn() -> void:
 	_prepare_cancel_lockin(false)
-	PlayerVariables.curr_player_clicks = PlayerVariables.max_player_clicks
+	_update_player_values(0,PlayerVariables.max_player_clicks)
 	card_queue.show_location()
 	draw_queue.show_location()
 	draw_card_to_from(card_hand, draw_pile)
+	play_pile.handle_start_turn()
 
 
 ## Hides the hand, hides the buttons
@@ -135,7 +141,7 @@ func _play_card(card : Card2D) -> void:
 	card_hand.draw_specific_card(card)
 	if(card.data.card_type == "Draw"):
 		draw_queue.add_card(card)
-	elif(card.data.card_type == "Play"):
+	elif(card.data.card_type == "Load"):
 		play_pile.add_card(card)
 	else:
 		card_queue.add_card(card)
@@ -200,10 +206,12 @@ func _prepare_cancel_lockin(is_preparing : bool = true)-> void:
 		card_hand.hide_location()
 		draw_pile.hide_location()
 		discard_pile.hide_location()
+		play_pile.hide_location()
 	else:
 		card_hand.show_location()
 		draw_pile.show_location()
 		discard_pile.show_location()
+		play_pile.show_location()
 
 
 ## Handles playing / cancelling of [card]
@@ -230,3 +238,13 @@ func _update_player_values(energy_change : int, click_change : int) -> void:
 	#update the hud display
 	card_hud.energy_value = PlayerVariables.curr_player_energy #update the energy display
 	card_hud.click_value = PlayerVariables.curr_player_clicks #update the click display
+
+
+func handle_card_effect(type : String, value : int):
+	match(type):
+		"Energy":
+			_update_player_values(value, 0)
+		"Ammo":
+			pass
+		"Click":
+			_update_player_values(0, value)

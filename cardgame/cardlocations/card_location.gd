@@ -209,7 +209,7 @@ func _resolve_card_interaction_queue(_card : Card2D, _event) -> void:
 func start_highlight(card : Card2D):
 	card.start_highlight()
 
-	if(_card_last_highlighted is Card2D):
+	if(_card_last_highlighted != null and _card_last_highlighted is Card2D):
 		if(_card_last_highlighted.get_parent() != self):
 			_card_last_highlighted = null
 		elif(_card_last_highlighted != card):
@@ -221,4 +221,5 @@ func start_highlight(card : Card2D):
 func dump_card_array() -> void:
 	for card in _card_array:
 		card.free()
+	_card_last_highlighted = null
 	_card_array = []

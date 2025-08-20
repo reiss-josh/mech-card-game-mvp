@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://ddkb5otrwvp1v"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_1ko2w"]
+
+[resource]
+script = ExtResource("1_1ko2w")
+card_name = "Smartware Distributor"
+card_energy_cost = 1
+card_type = "Load"
+card_value = 0
+card_is_persistent = true
+card_is_clickable = true
+card_is_repeat_clickable = true
+card_is_turn_start = true
+card_is_loadable = true
+card_loads_on_play = true
+card_loads_on_click = true
+card_unloads_on_click = false
+card_loads_on_start = false
+card_unloads_on_start = true
+card_load_start_value = 6
+card_load_increment = 3
+card_unload_increment = 1
+card_load_type = "Energy"
+card_discards_when_empty = false
+card_body = "Loads 6 credits on play.
+Unloads 1 credit at start of each turn.
+Click to load 2 credits."
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

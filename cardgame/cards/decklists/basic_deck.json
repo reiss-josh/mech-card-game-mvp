@@ -1,13 +1,11 @@
 {
 	"name":"Basic Deck",
 	"cards":[
+		"smartware_distributor",
+		"smartware_distributor",
 		"basic_attack",
 		"basic_attack",
 		"basic_attack",
-		"basic_attack",
-		"basic_attack",
-		"basic_move",
-		"basic_move",
 		"basic_move",
 		"basic_move",
 		"basic_move",

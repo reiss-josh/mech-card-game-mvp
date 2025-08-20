@@ -10,4 +10,4 @@ var max_player_clicks := 3
 
 var curr_player_health := max_player_health
 var curr_player_energy := max_player_energy
-var curr_player_clicks := max_player_clicks
+var curr_player_clicks := 0

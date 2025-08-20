@@ -61,6 +61,7 @@ theme = ExtResource("2_ahfly")
 layout_mode = 2
 
 [node name="CardBody" type="Label" parent="Background/BodyMargin/Body"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 1
 theme = ExtResource("2_ahfly")
@@ -68,6 +69,7 @@ theme_override_font_sizes/font_size = 50
 text = "Cardbody"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 2
 
 [node name="CardType" type="Label" parent="Background/BodyMargin/Body"]
 layout_mode = 2
