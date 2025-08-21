@@ -26,7 +26,7 @@ signal need_discard()
 ## Manages cardData structure
 @export var data:CardData:
 	set(value):
-		var card_template = $"CardViewport/CardTemplate"
+		var card_template = self
 		data = value
 		# check if we actually received any data
 		if(data != null):
@@ -36,7 +36,7 @@ signal need_discard()
 				_card_hud_elts_dict["Name"] = card_template.find_child("Name")
 				_card_hud_elts_dict["EnergyCost"] = card_template.find_child("EnergyCost")
 				_card_hud_elts_dict["CardBody"] = card_template.find_child("CardBody")
-				_card_hud_elts_dict["CardType"] = card_template.find_child("CardType")
+				#_card_hud_elts_dict["CardType"] = card_template.find_child("CardType")
 				_card_hud_elts_dict["ClickButton"] = card_template.find_child("ClickButton")
 				_card_hud_elts_dict["LoadContainer"] = card_template.find_child("LoadContainer")
 				_card_hud_elts_dict["LoadValue"] = card_template.find_child("LoadValue")
@@ -45,7 +45,7 @@ signal need_discard()
 			_card_hud_elts_dict["Name"].text = data.card_name
 			_card_hud_elts_dict["EnergyCost"].text = str(data.card_energy_cost)
 			_card_hud_elts_dict["CardBody"].text = data.card_body
-			_card_hud_elts_dict["CardType"].text = data.card_type
+			#_card_hud_elts_dict["CardType"].text = data.card_type
 			if(data.card_is_clickable):
 				_card_hud_elts_dict["ClickButton"].pressed.connect(_on_card_clicked)
 			debug_name = data.card_name
@@ -121,6 +121,7 @@ func prep_load_card() -> int:
 ## If [is_loading] = {true}, we load. Else, we unload.
 func load_unload_card_inc(is_loading : bool = false) -> int:
 	var curr_value = int(_card_hud_elts_dict["LoadValue"].text)
+	#print(data.card_name, curr_value, is_loading)
 	if(is_loading):
 		curr_value += data.card_load_increment
 	elif(!is_loading and curr_value > 0):
@@ -141,7 +142,7 @@ func handle_play_card() -> void:
 	#set the click button visible, if necessary
 	if(data.card_is_clickable): _card_hud_elts_dict["ClickButton"].visible = true
 	#prep the card if it loads on play
-	if(data.card_loads_on_play): prep_load_card()
+	if(data.card_subtype == "Load"): prep_load_card()
 
 
 ## Handles removing card from the PlayArea
@@ -155,18 +156,25 @@ func _on_card_clicked() -> void:
 	#bail if tapped
 	if(tapped == true): return
 	# do the click stuff
-	if(data.card_type == "Load"):
+	card_effect.emit("Click",-1)
+	if(data.card_subtype == "Load"):
 		if(data.card_loads_on_click): load_unload_card_inc(true)
 		elif(data.card_unloads_on_click): load_unload_card_inc(false)
 	# set card tapped if necessary
-	if(data.card_is_repeat_clickable == false): tapped = true
+	if(data.card_is_repeat_clickable == false): _tap_untap()
+
+
+## Handles tapping/untapping for cards
+func _tap_untap() -> void:
+	if(data.card_is_clickable):
+		_card_hud_elts_dict["ClickButton"].visible = tapped
+	tapped = !tapped
 
 
 ## Handles start-of-turn effects
 func handle_turn_start() -> void:
-	if(tapped == true): tapped = false
+	if(tapped == true): _tap_untap()
 	#bail if inappicable
 	if(not data.card_is_turn_start): return
-	if(data.card_type == "Load"):
-		if(data.card_loads_on_start): load_unload_card_inc(true)
-		elif(data.card_unloads_on_start): load_unload_card_inc(false)
+	if(data.card_loads_on_start): load_unload_card_inc(true)
+	elif(data.card_unloads_on_start): load_unload_card_inc(false)

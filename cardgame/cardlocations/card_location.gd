@@ -131,8 +131,10 @@ func _card_removal_unique(_card_array_position: int, _card : Card2D) -> void:
 
 ## Rearranges each card on the screen by running _rearrange_helper() on it
 func _rearrange_cards() -> void:
+	self.is_interactable = false
 	for curr_card_index in _card_array.size():
 		_rearrange_helper(_card_array[curr_card_index], curr_card_index)
+	self.is_interactable = self._is_interactable_type
 
 
 ## Performs the actual rearrangement of each [card] at [curr_card_index]

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://due5p5dkhxtla"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_re6eu"]
+
+[resource]
+script = ExtResource("1_re6eu")
+card_name = "Telework Contract"
+card_energy_cost = 1
+card_type = "Energy"
+card_subtype = "Load"
+card_value = 0
+card_is_persistent = true
+card_is_clickable = true
+card_is_repeat_clickable = false
+card_is_turn_start = false
+card_is_loadable = true
+card_loads_on_click = false
+card_unloads_on_click = true
+card_loads_on_start = false
+card_unloads_on_start = false
+card_load_start_value = 9
+card_load_increment = 0
+card_unload_increment = 3
+card_load_type = "Energy"
+card_discards_when_empty = true
+card_can_turn_before = false
+card_can_turn_after = false
+card_pattern = ""
+card_body = "Play -> Load 9 Energy
+Click -> Unload 9 Energy from ths card
+Empty -> Trash card"
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

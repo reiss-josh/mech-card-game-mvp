@@ -42,6 +42,7 @@ func _card_addition_unique(insert_position : int, card: Card2D) -> void:
 	card.get_node("CardCollisionArea").mouse_exited.connect(_on_card_input_event.bind(null, "mouse_exited", null, card))
 	card.update_highlight_transform(HAND_HIGHLIGHT_FACTOR, HAND_HIGHLIGHT_Y_OFFSET)
 
+
 ## Updates last_hand_position, disconnect signals
 ## {OVERRIDE}
 func _card_removal_unique(card_array_position : int, card : Card2D):

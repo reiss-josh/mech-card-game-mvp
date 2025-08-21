@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dpw6023dwwemj"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_0s24p"]
+
+[resource]
+script = ExtResource("1_0s24p")
+card_name = "Heavy Shield"
+card_energy_cost = 2
+card_type = "Defend"
+card_value = 5
+card_is_persistent = false
+card_is_clickable = false
+card_is_repeat_clickable = false
+card_is_turn_start = false
+card_is_loadable = false
+card_loads_on_click = false
+card_unloads_on_click = false
+card_loads_on_start = false
+card_unloads_on_start = false
+card_load_start_value = 0
+card_load_increment = 0
+card_unload_increment = 0
+card_load_type = ""
+card_discards_when_empty = false
+card_can_turn_before = false
+card_can_turn_after = false
+card_pattern = "Front-side"
+card_body = "Action -> Defend front or sides. Blocks up to {5} damage."
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

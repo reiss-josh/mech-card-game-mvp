@@ -5,25 +5,27 @@
 [resource]
 script = ExtResource("1_1ko2w")
 card_name = "Smartware Distributor"
-card_energy_cost = 1
-card_type = "Load"
+card_energy_cost = 0
+card_type = "Energy"
+card_subtype = "Load"
 card_value = 0
 card_is_persistent = true
 card_is_clickable = true
 card_is_repeat_clickable = true
 card_is_turn_start = true
 card_is_loadable = true
-card_loads_on_play = true
 card_loads_on_click = true
 card_unloads_on_click = false
 card_loads_on_start = false
 card_unloads_on_start = true
-card_load_start_value = 6
+card_load_start_value = 0
 card_load_increment = 3
 card_unload_increment = 1
 card_load_type = "Energy"
 card_discards_when_empty = false
-card_body = "Loads 6 credits on play.
-Unloads 1 credit at start of each turn.
-Click to load 2 credits."
+card_can_turn_before = false
+card_can_turn_after = false
+card_pattern = ""
+card_body = "Click -> Load 3 Energy
+Turn Start -> Unload 1 Energy from this card"
 metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

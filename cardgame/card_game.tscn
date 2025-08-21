@@ -10,20 +10,22 @@
 [node name="CardGame" type="Node"]
 script = ExtResource("1_csu0h")
 
-[node name="CardHand" parent="." instance=ExtResource("2_p03o1")]
+[node name="CardHud" parent="." instance=ExtResource("5_5wq22")]
+
+[node name="CardLayer" type="CanvasLayer" parent="."]
+
+[node name="CardHand" parent="CardLayer" instance=ExtResource("2_p03o1")]
 position = Vector2(591, 574)
 
-[node name="DrawPile" parent="." instance=ExtResource("4_p03o1")]
+[node name="DrawPile" parent="CardLayer" instance=ExtResource("4_p03o1")]
 position = Vector2(1063, 589)
 
-[node name="DiscardPile" parent="." instance=ExtResource("4_p03o1")]
+[node name="DiscardPile" parent="CardLayer" instance=ExtResource("4_p03o1")]
 deck_position_offset = 2
 
-[node name="PlayPile" parent="." instance=ExtResource("4_s1omh")]
+[node name="PlayPile" parent="CardLayer" instance=ExtResource("4_s1omh")]
 
-[node name="CardQueue" parent="." instance=ExtResource("4_5wq22")]
+[node name="CardQueue" parent="CardLayer" instance=ExtResource("4_5wq22")]
 
-[node name="DrawQueue" parent="." instance=ExtResource("4_5wq22")]
+[node name="DrawQueue" parent="CardLayer" instance=ExtResource("4_5wq22")]
 left_to_right = -1
-
-[node name="CardHud" parent="." instance=ExtResource("5_5wq22")]

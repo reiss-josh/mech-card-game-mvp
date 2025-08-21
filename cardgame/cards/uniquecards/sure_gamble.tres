@@ -1,13 +1,13 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dfd0m4j17khxb"]
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://jwhpf1h8bfw5"]
 
-[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_1o7xb"]
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_v8aom"]
 
 [resource]
-script = ExtResource("1_1o7xb")
-card_name = "UI Draw"
-card_energy_cost = 0
-card_type = "Draw"
-card_value = 1
+script = ExtResource("1_v8aom")
+card_name = "Sure Gamble"
+card_energy_cost = 5
+card_type = "Energy"
+card_value = 9
 card_is_persistent = false
 card_is_clickable = false
 card_is_repeat_clickable = false
@@ -22,5 +22,5 @@ card_load_increment = 0
 card_unload_increment = 0
 card_load_type = ""
 card_discards_when_empty = false
-card_body = "Play -> Draw 1 Card"
+card_body = "Play -> Gain 9 Energy"
 metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"
