@@ -187,6 +187,7 @@ func _on_card_input_event(event, card : CardUI) -> void:
 ## Compares against currently enqueued events, if any exist, to ensure the highest card in hand is preferred
 ## (Also handles certain special cases)
 func _attempt_card_interaction_enqueue(card : CardUI, event) -> void:
+	#print(card.debug_name, "\t", card.last_hand_position, "\t", card.z_index)
 	# Enqueue if any of the following:
 	# 	case 1: card is highest in the location
 	# 	case 2: card is tied for highest position, and event is a String (overrides clicks/mouse movements with custom events)
@@ -209,7 +210,6 @@ func _resolve_card_interaction_queue(_card : CardUI, _event) -> void:
 ## Starts highlighting for a card
 func start_highlight(card : CardUI):
 	card.start_highlight()
-
 	if(_card_last_highlighted != null and _card_last_highlighted is CardUI):
 		if(_card_last_highlighted.get_parent() != self):
 			_card_last_highlighted = null

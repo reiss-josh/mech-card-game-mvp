@@ -113,7 +113,10 @@ func update_highlight_transform(scale_factor : float, y_offset : float) -> void:
 func prep_load_card() -> int:
 	if(_card_hud_elts_dict["LoadContainer"].visible == false):
 		_card_hud_elts_dict["LoadContainer"].visible = true
-	_card_hud_elts_dict["LoadValue"].text = str(data.card_load_start_value)
+	if(data.card_loads_on_play):
+		_card_hud_elts_dict["LoadValue"].text = str(data.card_load_start_value)
+	else:
+		_card_hud_elts_dict["LoadValue"].text = str(0)
 	return data.card_load_start_value
 
 
@@ -141,7 +144,7 @@ func handle_play_card() -> void:
 	#set the click button visible, if necessary
 	if(data.card_is_clickable): _card_hud_elts_dict["ClickButton"].visible = true
 	#prep the card if it loads on play
-	if(data.card_loads_on_play): prep_load_card()
+	if(data.card_type == "Load"): prep_load_card()
 
 
 ## Handles removing card from the PlayArea

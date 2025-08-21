@@ -44,7 +44,7 @@ func _card_addition_unique(_insert_position : int, card: CardUI) -> void:
 	card.update_highlight_transform(QUEUE_HIGHLIGHT_FACTOR, QUEUE_HIGHLIGHT_Y_OFFSET)
 
 
-## Updates last_hand_position, disconnect signals
+## Disconnect signals
 ## {OVERRIDE}
 func _card_removal_unique(_card_array_position : int, card : CardUI):
 	card.gui_input.disconnect(_on_card_input_event)

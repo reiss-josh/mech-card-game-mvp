@@ -144,7 +144,7 @@ func handle_play_card() -> void:
 	#set the click button visible, if necessary
 	if(data.card_is_clickable): _card_hud_elts_dict["ClickButton"].visible = true
 	#prep the card if it loads on play
-	if(data.card_loads_on_play): prep_load_card()
+	if(data.card_type == "Load"): prep_load_card()
 
 
 ## Handles removing card from the PlayArea
@@ -163,6 +163,7 @@ func _on_card_clicked() -> void:
 		elif(data.card_unloads_on_click): load_unload_card_inc(false)
 	# set card tapped if necessary
 	if(data.card_is_repeat_clickable == false): tapped = true
+	card_effect.emit("Click", -1)
 
 
 ## Handles start-of-turn effects

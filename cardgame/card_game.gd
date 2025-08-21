@@ -1,4 +1,4 @@
-extends Control
+extends Node
 class_name CardGame
 
 #card data
@@ -7,12 +7,12 @@ var energy_card_data = load("res://cardgame/cards/uniquecards/ui_energy.tres")
 var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
 var deck_list_name : String = "basic_deck"
 #store our card locations
-@onready var card_hand : CardLocation = get_node("CardHand")
-@onready var draw_pile : CardLocation = get_node("DrawPile")
-@onready var discard_pile : CardLocation = get_node("DiscardPile")
-@onready var play_pile : CardLocation = get_node("PlayPile")
-@onready var card_queue : CardLocation = get_node("CardQueue")
-@onready var draw_queue : CardLocation = get_node("DrawQueue")
+@onready var card_hand : CardLocation = get_node("CardHud/CardHand")
+@onready var draw_pile : CardLocation = get_node("CardHud/DrawPile")
+@onready var discard_pile : CardLocation = get_node("CardHud/DiscardPile")
+@onready var play_pile : CardLocation = get_node("CardHud/PlayPile")
+@onready var card_queue : CardLocation = get_node("CardHud/CardQueue")
+@onready var draw_queue : CardLocation = get_node("CardHud/DrawQueue")
 @onready var card_hud : CardHud = get_node("CardHud")
 #for locking in
 var _prepared_lockin : bool = false
@@ -238,6 +238,7 @@ func _update_player_values(energy_change : int, click_change : int) -> void:
 	#update the hud display
 	card_hud.energy_value = PlayerVariables.curr_player_energy #update the energy display
 	card_hud.click_value = PlayerVariables.curr_player_clicks #update the click display
+	if(PlayerVariables.curr_player_clicks <= 0): _prepare_cancel_lockin(true)
 
 
 func handle_card_effect(type : String, value : int):

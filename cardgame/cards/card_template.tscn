@@ -79,19 +79,6 @@ text = "CardType"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Control" type="Control" parent="Background/BodyMargin/Body"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="ClickButton" type="Button" parent="Background/BodyMargin/Body"]
-visible = false
-custom_minimum_size = Vector2(200, 75)
-layout_mode = 2
-size_flags_horizontal = 4
-theme = ExtResource("2_ahfly")
-text = "ClickButton"
-
 [node name="LoadContainer" type="CenterContainer" parent="Background/BodyMargin/Body"]
 visible = false
 custom_minimum_size = Vector2(0, 100)
@@ -156,3 +143,19 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
 color = Color(0.826338, 0, 0.11068, 1)
+
+[node name="ClickButton" type="Button" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -193.0
+offset_top = -144.0
+offset_right = 193.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("2_ahfly")
+text = "ClickButton"
