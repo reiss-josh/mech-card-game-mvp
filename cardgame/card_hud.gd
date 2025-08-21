@@ -1,4 +1,4 @@
-extends Control
+extends CanvasLayer
 class_name CardHud
 
 @export var _ClickValue : Label 
@@ -34,4 +34,5 @@ func prepare_hud() -> void:
 		Global.CARD_SIZE.x * PlayerVariables.max_player_clicks * Global.CARD_QUEUE_SCALE) + (
 		Global.CARD_QUEUE_ADDITIONAL_BUFFER.x * (PlayerVariables.max_player_clicks - 1)
 	)
-	$QueueContainer.position.x = (get_viewport_rect().size.x / 2) - ($QueueContainer.size.x / 2)
+	#print(get_final_transform())
+	$QueueContainer.position.x = (get_viewport().get_visible_rect().size.x / 2) - ($QueueContainer.size.x / 2)

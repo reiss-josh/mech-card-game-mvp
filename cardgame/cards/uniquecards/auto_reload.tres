@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b4r42eaqqn4qd"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_0moqo"]
+
+[resource]
+script = ExtResource("1_0moqo")
+card_name = "Auto Reload"
+card_energy_cost = 5
+card_type = "Reload"
+card_subtype = "Load"
+card_value = 0
+card_is_persistent = true
+card_is_clickable = false
+card_is_repeat_clickable = false
+card_is_turn_start = true
+card_is_loadable = true
+card_loads_on_click = false
+card_unloads_on_click = false
+card_loads_on_start = false
+card_unloads_on_start = true
+card_load_start_value = 6
+card_load_increment = 0
+card_unload_increment = 2
+card_load_type = "Ammo"
+card_discards_when_empty = true
+card_can_turn_before = false
+card_can_turn_after = false
+card_pattern = ""
+card_body = "Play -> Load 6 rounds
+Turn Start -> Unload 2 rounds from ths card
+Empty -> Trash card"
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://pu7pxu6txe78"]
 
 [ext_resource type="Script" uid="uid://bgdu2q2vfv31p" path="res://cardgame/cards/old/card.gd" id="1_yny21"]
-[ext_resource type="PackedScene" uid="uid://8tk27chelhf0" path="res://cardgame/cards/card_template.tscn" id="2_trobf"]
+[ext_resource type="PackedScene" uid="uid://8tk27chelhf0" path="res://cardgame/cards/old/card_template.tscn" id="2_trobf"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_twxyb"]
 viewport_path = NodePath("Front/SubViewport")

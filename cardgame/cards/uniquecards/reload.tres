@@ -1,13 +1,13 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dfd0m4j17khxb"]
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dkeplhifigfjg"]
 
-[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_1o7xb"]
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_4cnee"]
 
 [resource]
-script = ExtResource("1_1o7xb")
-card_name = "UI Draw"
-card_energy_cost = 0
-card_type = "Draw"
-card_value = 1
+script = ExtResource("1_4cnee")
+card_name = "Reload!"
+card_energy_cost = 3
+card_type = "Reload"
+card_value = 5
 card_is_persistent = false
 card_is_clickable = false
 card_is_repeat_clickable = false
@@ -22,5 +22,5 @@ card_load_increment = 0
 card_unload_increment = 0
 card_load_type = ""
 card_discards_when_empty = false
-card_body = "Play -> Draw 1 Card"
+card_body = "Play -> Reloads up to {5} rounds."
 metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

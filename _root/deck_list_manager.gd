@@ -34,6 +34,7 @@ func load_deck_json(deck_filename : String) -> Array[CardData]:
 	for card_name in data.get("cards"):
 		var curr_card_data_path : String = card_data_path+card_name+".tres"
 		var curr_card_data : CardData = load(curr_card_data_path)
+		#print(card_name, "\t", curr_card_data_path, "\t", curr_card_data.card_name)
 		card_array.append(curr_card_data)
 	return card_array
 

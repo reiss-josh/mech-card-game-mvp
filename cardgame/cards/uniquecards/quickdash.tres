@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b8vtlvhmao0kw"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_xifx3"]
+
+[resource]
+script = ExtResource("1_xifx3")
+card_name = "Quickdash"
+card_energy_cost = 3
+card_type = "Move"
+card_value = 3
+card_is_persistent = false
+card_is_clickable = false
+card_is_repeat_clickable = false
+card_is_turn_start = false
+card_is_loadable = false
+card_loads_on_click = false
+card_unloads_on_click = false
+card_loads_on_start = false
+card_unloads_on_start = false
+card_load_start_value = 0
+card_load_increment = 0
+card_unload_increment = 0
+card_load_type = ""
+card_discards_when_empty = false
+card_can_turn_before = false
+card_can_turn_after = true
+card_pattern = "Side"
+card_body = "Action -> Dash up to 3xAGL left or right."
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

@@ -1,10 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://blcbjhhbhiy0m"]
 
 [ext_resource type="Script" uid="uid://b2md22fdsgke1" path="res://cardgame/cards/card_2D.gd" id="1_xoe0k"]
-[ext_resource type="PackedScene" uid="uid://8tk27chelhf0" path="res://cardgame/cards/card_template.tscn" id="2_43yx8"]
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_lrawq"]
-viewport_path = NodePath("CardViewport")
+[ext_resource type="Texture2D" uid="uid://b8187sy51w1vo" path="res://cardgame/art/basic_card.png" id="2_43yx8"]
+[ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="3_43yx8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qev3v"]
 size = Vector2(750, 1050)
@@ -15,17 +13,103 @@ script = ExtResource("1_xoe0k")
 
 [node name="CardCollisionArea" type="Area2D" parent="."]
 
-[node name="CardSprite" type="Sprite2D" parent="CardCollisionArea"]
-texture = SubResource("ViewportTexture_lrawq")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CardCollisionArea"]
 shape = SubResource("RectangleShape2D_qev3v")
 
-[node name="CardViewport" type="SubViewport" parent="."]
-size = Vector2i(750, 1050)
-size_2d_override = Vector2i(750, 1050)
-render_target_update_mode = 1
+[node name="CardBase" type="Sprite2D" parent="."]
+texture = ExtResource("2_43yx8")
 
-[node name="CardTemplate" parent="CardViewport" instance=ExtResource("2_43yx8")]
-offset_right = 0.0
-offset_bottom = 0.0
+[node name="CardCost" type="Node2D" parent="."]
+position = Vector2(300, -456.667)
+
+[node name="EnergyCost" type="Label" parent="CardCost"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.5
+offset_top = -32.0
+offset_right = 37.5
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme = ExtResource("3_43yx8")
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CardName" type="Node2D" parent="."]
+position = Vector2(-320, -456)
+
+[node name="Name" type="Label" parent="CardName"]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 320.0
+offset_bottom = 32.0
+grow_vertical = 2
+theme = ExtResource("3_43yx8")
+text = "CardName"
+vertical_alignment = 1
+
+[node name="LoadContainer" type="Node2D" parent="."]
+visible = false
+
+[node name="LoadHBox" type="HBoxContainer" parent="LoadContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -20.0
+offset_right = 55.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LoadTip" type="Label" parent="LoadContainer/LoadHBox"]
+layout_mode = 2
+theme = ExtResource("3_43yx8")
+theme_override_font_sizes/font_size = 50
+text = "Load:"
+
+[node name="LoadValue" type="Label" parent="LoadContainer/LoadHBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("3_43yx8")
+theme_override_font_sizes/font_size = 50
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CardBody" type="Label" parent="."]
+offset_left = -333.0
+offset_top = -409.0
+offset_right = 333.0
+offset_bottom = 1.0
+theme = ExtResource("3_43yx8")
+theme_override_font_sizes/font_size = 40
+text = "Cardbody Cardbody Cardbody Cardbody Cardbody Cardbody Cardbody Cardbody"
+autowrap_mode = 2
+
+[node name="ButtonContainer" type="Node2D" parent="."]
+
+[node name="ClickButton" type="Button" parent="ButtonContainer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = 96.6667
+offset_right = 72.0
+offset_bottom = 128.667
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_43yx8")
+text = "Click Me!"

@@ -2,18 +2,17 @@ extends Node
 class_name CardGame
 
 #card data
-var basic_attack_data = load("res://cardgame/cards/uniquecards/basic_attack.tres")
 var energy_card_data = load("res://cardgame/cards/uniquecards/ui_energy.tres")
 var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
 var deck_list_name : String = "basic_deck"
 #store our card locations
-@onready var card_hand : CardLocation = get_node("CardHud/CardHand")
-@onready var draw_pile : CardLocation = get_node("CardHud/DrawPile")
-@onready var discard_pile : CardLocation = get_node("CardHud/DiscardPile")
-@onready var play_pile : CardLocation = get_node("CardHud/PlayPile")
-@onready var card_queue : CardLocation = get_node("CardHud/CardQueue")
-@onready var draw_queue : CardLocation = get_node("CardHud/DrawQueue")
-@onready var card_hud : CardHud = get_node("CardHud")
+@onready var card_hand : CardLocation = find_child("CardHand")
+@onready var draw_pile : CardLocation = find_child("DrawPile")
+@onready var discard_pile : CardLocation = find_child("DiscardPile")
+@onready var play_pile : CardLocation = find_child("PlayPile")
+@onready var card_queue : CardLocation = find_child("CardQueue")
+@onready var draw_queue : CardLocation = find_child("DrawQueue")
+@onready var card_hud : CardHud = find_child("CardHud")
 #for locking in
 var _prepared_lockin : bool = false
 var _discard_mode : bool = false
@@ -37,12 +36,14 @@ func _process(_delta) -> void:
 	if Input.is_action_just_pressed("ReturnCard"):
 		_undo_last_queue()
 	if Input.is_action_just_pressed("CreateCard"):
-		draw_pile.create_card(basic_attack_data)
+		draw_pile.create_card(energy_card_data)
 	if Input.is_action_just_pressed("DiscardCard"):
 		discard_card()
 	if Input.is_action_just_pressed("StartTurn"):
 		card_queue.dump_card_array()
 		start_turn()
+	if Input.is_action_just_pressed("TempDebug"):
+		card_hand._rearrange_cards()
 
 
 ## Connects all the necessary signals from children
@@ -60,7 +61,7 @@ func _connect_child_signals():
 func draw_card_to_from(destination : CardLocation, source : CardLocation = draw_pile, quantity : int = 1) -> void:
 	for cards in quantity:
 		var drawn_card = source.draw_card()
-		if drawn_card is CardUI:
+		if drawn_card is Card2D:
 			destination.add_card(drawn_card)
 
 
@@ -77,7 +78,7 @@ func discard_card(hand_position : int = -1) -> void:
 
 
 ## Discards specifically requested [card] from the card [location] (defaults to hand)
-func discard_specific_card(card : CardUI, location : CardLocation = card_hand) -> void:
+func discard_specific_card(card : Card2D, location : CardLocation = card_hand) -> void:
 	if card_hand.card_array_size <= 0:
 		return
 	location.draw_specific_card(card)
@@ -87,6 +88,7 @@ func discard_specific_card(card : CardUI, location : CardLocation = card_hand) -
 
 ## Makes hand visible, makes buttons visible, draws a card from the deck
 func start_turn() -> void:
+	PlayerVariables.curr_player_clicks = 0
 	_prepare_cancel_lockin(false)
 	_update_player_values(0,PlayerVariables.max_player_clicks)
 	card_queue.show_location()
@@ -111,7 +113,7 @@ func end_turn() -> void:
 
 
 ## Handles [card] being clicked
-func _on_card_selected(card : CardUI) -> void:
+func _on_card_selected(card : Card2D) -> void:
 	# check if we're in discard mode -- if so, try to discard, then see if we can end the turn.
 	if(_discard_mode):
 		discard_specific_card(card)
@@ -129,7 +131,7 @@ func _on_card_selected(card : CardUI) -> void:
 
 
 ## Checks if [card] can be legally played; returns true/false
-func _card_can_be_played(card : CardUI) -> bool:
+func _card_can_be_played(card : Card2D) -> bool:
 	var card_energy_cost = card.data.card_energy_cost
 	if((card_energy_cost <= PlayerVariables.curr_player_energy) and !card_queue.card_array_isfull):
 		return true
@@ -137,11 +139,11 @@ func _card_can_be_played(card : CardUI) -> bool:
 
 
 ## Plays [card] to the queue, and handles any interactions
-func _play_card(card : CardUI) -> void:
+func _play_card(card : Card2D) -> void:
 	card_hand.draw_specific_card(card)
 	if(card.data.card_type == "Draw"):
 		draw_queue.add_card(card)
-	elif(card.data.card_type == "Load"):
+	elif(card.data.card_is_persistent):
 		play_pile.add_card(card)
 	else:
 		card_queue.add_card(card)
@@ -180,7 +182,7 @@ func _undo_last_queue()-> void:
 		return
 	#gets the card out, and updates the HUD
 	var last_queued_card = card_queue.draw_card()
-	if(last_queued_card is not CardUI):
+	if(last_queued_card is not Card2D):
 		return
 	manage_card_play_cancel(last_queued_card, false)
 	if(last_queued_card.data.card_name == "Basic Energy"):
@@ -216,7 +218,7 @@ func _prepare_cancel_lockin(is_preparing : bool = true)-> void:
 
 ## Handles playing / cancelling of [card]
 ## Takes [is_playing] - {true} if playing, {false} if cancelling
-func manage_card_play_cancel(card : CardUI, is_playing: bool = true) -> void:
+func manage_card_play_cancel(card : Card2D, is_playing: bool = true) -> void:
 	var play_cancel_mult = int(is_playing)
 	if(play_cancel_mult == 0): play_cancel_mult = -1
 	
@@ -231,21 +233,24 @@ func manage_card_play_cancel(card : CardUI, is_playing: bool = true) -> void:
 
 ## Updates player energy global by [energy_change] and click global by [click_change].
 ## Updates HUD to reflect changes.
-func _update_player_values(energy_change : int, click_change : int) -> void:
+func _update_player_values(energy_change : int, click_change : int, ammo_change : int = 0) -> void:
 	#update globals
 	PlayerVariables.curr_player_energy += energy_change
 	PlayerVariables.curr_player_clicks += click_change
+	PlayerVariables.curr_player_ammo += ammo_change
 	#update the hud display
 	card_hud.energy_value = PlayerVariables.curr_player_energy #update the energy display
 	card_hud.click_value = PlayerVariables.curr_player_clicks #update the click display
-	if(PlayerVariables.curr_player_clicks <= 0): _prepare_cancel_lockin(true)
+	#card_hud.ammo_value = PlayerVariables.curr_player_ammo
+	if(PlayerVariables.curr_player_clicks <= 0): #check if the queue still has room after playing the new card
+		_prepare_cancel_lockin(true)
 
 
 func handle_card_effect(type : String, value : int):
 	match(type):
 		"Energy":
-			_update_player_values(value, 0)
+			_update_player_values(value, 0, 0)
 		"Ammo":
-			pass
+			_update_player_values(0,0,value)
 		"Click":
-			_update_player_values(0, value)
+			_update_player_values(0, value, 0)

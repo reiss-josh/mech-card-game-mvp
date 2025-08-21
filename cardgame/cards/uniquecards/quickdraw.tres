@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dnx3b26068lqq"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_ywtra"]
+
+[resource]
+script = ExtResource("1_ywtra")
+card_name = "Quickdraw"
+card_energy_cost = 2
+card_type = "Attack"
+card_value = 2
+card_is_persistent = false
+card_is_clickable = false
+card_is_repeat_clickable = false
+card_is_turn_start = false
+card_is_loadable = false
+card_loads_on_click = false
+card_unloads_on_click = false
+card_loads_on_start = false
+card_unloads_on_start = false
+card_load_start_value = 0
+card_load_increment = 0
+card_unload_increment = 0
+card_load_type = ""
+card_discards_when_empty = false
+card_can_turn_before = false
+card_can_turn_after = false
+card_pattern = "Front"
+card_body = "Action -> Fire in any orthogonal direction. Deals {2} damage."
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

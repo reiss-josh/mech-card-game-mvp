@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://c1bk10v0s8r4r"]
+
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_p4bfm"]
+
+[resource]
+script = ExtResource("1_p4bfm")
+card_name = "Beam Saber"
+card_energy_cost = 3
+card_type = "Attack"
+card_value = 5
+card_is_persistent = false
+card_is_clickable = false
+card_is_repeat_clickable = false
+card_is_turn_start = false
+card_is_loadable = false
+card_loads_on_click = false
+card_unloads_on_click = false
+card_loads_on_start = false
+card_unloads_on_start = false
+card_load_start_value = 0
+card_load_increment = 0
+card_unload_increment = 0
+card_load_type = ""
+card_discards_when_empty = false
+card_can_turn_before = false
+card_can_turn_after = false
+card_pattern = "Trident"
+card_body = "Action -> Melee attack. Width{3}, Range {1xAGL}. Deals {5} damage."
+metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

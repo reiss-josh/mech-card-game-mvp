@@ -2,7 +2,5 @@
 
 [ext_resource type="Script" uid="uid://bmflbsehv30wk" path="res://cardgame/cardlocations/card_deck_physical.gd" id="1_wpkhg"]
 
-[node name="CardDeck" type="Control"]
-layout_mode = 3
-anchors_preset = 0
+[node name="CardDeck" type="Node2D"]
 script = ExtResource("1_wpkhg")

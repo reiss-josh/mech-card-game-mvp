@@ -109,7 +109,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
 
 [node name="MiddleLine-Black" type="ColorRect" parent="MiddleLineContainer"]
 custom_minimum_size = Vector2(0, 10)
@@ -143,19 +142,3 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 4
 color = Color(0.826338, 0, 0.11068, 1)
-
-[node name="ClickButton" type="Button" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -193.0
-offset_top = -144.0
-offset_right = 193.0
-grow_horizontal = 2
-grow_vertical = 0
-theme = ExtResource("2_ahfly")
-text = "ClickButton"
