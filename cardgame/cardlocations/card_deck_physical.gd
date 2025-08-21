@@ -13,7 +13,7 @@ func _self_setup(card_lengths : int = deck_position_offset) -> void:
 
 ## Performs the actual rearrangement
 const _CARD_BUFFER = Vector2(10,0) ## distance cards should be apart from eachother in deck (in pixels)
-func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
+func _rearrange_helper(card : CardUI, curr_card_index : int) -> void:
 	var dist_from_top := card_array_size-1 - curr_card_index # determine our index distance from the middle card
 	card.z_index = curr_card_index
 	card.move_and_scale(Vector2(0, dist_from_top * _CARD_BUFFER.x))

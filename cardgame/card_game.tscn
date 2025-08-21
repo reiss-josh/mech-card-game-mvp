@@ -7,14 +7,22 @@
 [ext_resource type="PackedScene" uid="uid://d1caihj548e3a" path="res://cardgame/cardlocations/scenes/card_play_area.tscn" id="4_s1omh"]
 [ext_resource type="PackedScene" uid="uid://ctwwril538mrt" path="res://cardgame/card_hud.tscn" id="5_5wq22"]
 
-[node name="CardGame" type="Node"]
+[node name="CardGame" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_csu0h")
 
 [node name="CardHand" parent="." instance=ExtResource("2_p03o1")]
-position = Vector2(591, 574)
+offset_left = 591.0
+offset_top = 574.0
+offset_right = 591.0
+offset_bottom = 574.0
 
 [node name="DrawPile" parent="." instance=ExtResource("4_p03o1")]
-position = Vector2(1063, 589)
+offset_left = 1063.0
+offset_top = 589.0
+offset_right = 1063.0
+offset_bottom = 589.0
 
 [node name="DiscardPile" parent="." instance=ExtResource("4_p03o1")]
 deck_position_offset = 2
@@ -27,3 +35,4 @@ deck_position_offset = 2
 left_to_right = -1
 
 [node name="CardHud" parent="." instance=ExtResource("5_5wq22")]
+layout_mode = 1

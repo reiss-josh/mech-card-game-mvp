@@ -2,5 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bwlut3j7rwjbu" path="res://cardgame/cardlocations/card_play_area.gd" id="1_2daj5"]
 
-[node name="CardPlayArea" type="Node2D"]
+[node name="CardPlayArea" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_2daj5")

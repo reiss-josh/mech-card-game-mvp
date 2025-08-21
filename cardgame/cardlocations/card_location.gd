@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 class_name CardLocation
 ## Manages cards held within a card_array
 ## Can create, add, remove, and rearrange cards
@@ -6,8 +6,9 @@ class_name CardLocation
 ## When creating a CardLocation class overload the _self_positioning(), _card_removal_unique(), and _rearrange_helper() methods
 
 #variables for card array
-var _card_array : Array[Card2D] = [] ## Array of cards in hand
-var _card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
+var _card_array : Array[CardUI] = [] ## Array of cards in hand
+#var _card_prefab := load("res://cardgame/cards/card_2D.tscn") ##Prefab for card_2D
+var _card_prefab := load("res://cardgame/cards/card_ui.tscn") ##Prefab for card_UI
 #variables for show/hide
 var need_move := false
 var _HIDE_OFFSET = Vector2.ZERO #would like to make this const, but children need to override it
@@ -19,7 +20,7 @@ var _is_interactable_type := false ## Whether location is capable of responding 
 var is_interactable := false ## Whether location should currently respond to input
 var _card_interaction_queued_event = null ## input event for highest-indexed card interacted with this frame
 var _card_interaction_queued_location_position : int = -1 ## highest-position card interacted with this frame
-var _card_last_highlighted : Card2D
+var _card_last_highlighted : CardUI
 # card array externals
 var card_array_size : int: ## Public property for _card_array.size()
 	get:
@@ -65,8 +66,8 @@ func create_from_decklist(deck_name : String) -> void:
 
 
 ## Creates new card from given [data], and places at top of the location. Returns the card.
-func create_card(data) -> Card2D:
-	var card : Card2D = _card_prefab.instantiate()
+func create_card(data) -> CardUI:
+	var card : CardUI = _card_prefab.instantiate()
 	card.data = data
 	add_child(card)
 	add_card(card)
@@ -89,10 +90,10 @@ func add_card(card, insert_position: int = -1) -> bool:
 
 ## Draws a card at [card_array_position] and returns it
 # TODO: make this legible and non-stupid
-func draw_card(card_array_position : int = -1) -> Card2D:
+func draw_card(card_array_position : int = -1) -> CardUI:
 	if _card_array.is_empty() or card_array_position > card_array_size:
 		return
-	var ret_card : Card2D
+	var ret_card : CardUI
 	if (card_array_position < 0): #if no position passed
 		ret_card = _card_array.pop_back()
 	else: #if position passed
@@ -107,7 +108,7 @@ func draw_card(card_array_position : int = -1) -> Card2D:
 
 ## Removes [card] from location at passed position.
 # TODO: make this legible and non-stupid
-func draw_specific_card(card : Card2D) -> Card2D:
+func draw_specific_card(card : CardUI) -> CardUI:
 	if _card_array.size() <= 0:
 		return
 	var ret_card_ind = _card_array.find(card)
@@ -119,13 +120,13 @@ func draw_specific_card(card : Card2D) -> Card2D:
 
 ## Special function to be overrloaded by special methods for children on card addition
 ## {OVERLOAD}
-func _card_addition_unique(_card_array_position: int, _card : Card2D) -> void:
+func _card_addition_unique(_card_array_position: int, _card : CardUI) -> void:
 	pass
 
 
 ## Special function to be overrloaded by special methods for children on card removal
 ## {OVERLOAD}
-func _card_removal_unique(_card_array_position: int, _card : Card2D) -> void:
+func _card_removal_unique(_card_array_position: int, _card : CardUI) -> void:
 	pass
 
 
@@ -137,7 +138,7 @@ func _rearrange_cards() -> void:
 
 ## Performs the actual rearrangement of each [card] at [curr_card_index]
 ## {OVERLOAD}
-func _rearrange_helper(_card : Card2D, _curr_card_index : int) -> void:
+func _rearrange_helper(_card : CardUI, _curr_card_index : int) -> void:
 	pass
 
 
@@ -177,7 +178,7 @@ func _show_hide_helper(hide_flag : bool) -> void:
 
 
 ## Enqueues input events from generic 2d_input_event signals
-func _on_card_input_event(_viewport, event, _shape_idx, card : Card2D) -> void:
+func _on_card_input_event(event, card : CardUI) -> void:
 	if(is_interactable and card.need_move == false):
 		_attempt_card_interaction_enqueue(card, event)
 
@@ -185,7 +186,7 @@ func _on_card_input_event(_viewport, event, _shape_idx, card : Card2D) -> void:
 ## Attempts to enqueue event from card for interaction this frame
 ## Compares against currently enqueued events, if any exist, to ensure the highest card in hand is preferred
 ## (Also handles certain special cases)
-func _attempt_card_interaction_enqueue(card : Card2D, event) -> void:
+func _attempt_card_interaction_enqueue(card : CardUI, event) -> void:
 	# Enqueue if any of the following:
 	# 	case 1: card is highest in the location
 	# 	case 2: card is tied for highest position, and event is a String (overrides clicks/mouse movements with custom events)
@@ -201,15 +202,15 @@ func _attempt_card_interaction_enqueue(card : Card2D, event) -> void:
 
 ## Performs the input event associated with the card which is highest up in the location
 ## {OVERRIDE}
-func _resolve_card_interaction_queue(_card : Card2D, _event) -> void:
+func _resolve_card_interaction_queue(_card : CardUI, _event) -> void:
 	pass
 
 
 ## Starts highlighting for a card
-func start_highlight(card : Card2D):
+func start_highlight(card : CardUI):
 	card.start_highlight()
 
-	if(_card_last_highlighted != null and _card_last_highlighted is Card2D):
+	if(_card_last_highlighted != null and _card_last_highlighted is CardUI):
 		if(_card_last_highlighted.get_parent() != self):
 			_card_last_highlighted = null
 		elif(_card_last_highlighted != card):

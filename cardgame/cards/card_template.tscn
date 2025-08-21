@@ -13,6 +13,7 @@ offset_right = -402.0
 offset_bottom = 402.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -81,6 +82,7 @@ vertical_alignment = 1
 [node name="Control" type="Control" parent="Background/BodyMargin/Body"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+mouse_filter = 2
 
 [node name="ClickButton" type="Button" parent="Background/BodyMargin/Body"]
 visible = false
@@ -98,6 +100,7 @@ layout_mode = 2
 [node name="ColorRect" type="ColorRect" parent="Background/BodyMargin/Body/LoadContainer"]
 custom_minimum_size = Vector2(400, 75)
 layout_mode = 2
+mouse_filter = 1
 
 [node name="LoadZone" type="HBoxContainer" parent="Background/BodyMargin/Body/LoadContainer"]
 layout_mode = 2
@@ -119,6 +122,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 
 [node name="MiddleLine-Black" type="ColorRect" parent="MiddleLineContainer"]
 custom_minimum_size = Vector2(0, 10)

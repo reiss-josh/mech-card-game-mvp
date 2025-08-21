@@ -5,7 +5,7 @@ class_name CardHand
 ## Any card_2D objects passed in must be preloaded with card_data
 
 # Variables for card interaction management
-signal card_selected(card : Card2D) ## signal for card being played
+signal card_selected(card : CardUI) ## signal for card being played
 
 
 ## Function for rearranging screen position on _ready
@@ -20,7 +20,7 @@ func _self_setup() -> void:
 ## Performs the actual rearrangement
 ## {OVERRIDE}
 const _CARD_BUFFER := Vector2(500,40) ## distance cards should be apart from eachother in hand (in pixels)
-func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
+func _rearrange_helper(card : CardUI, curr_card_index : int) -> void:
 	var middle_card_index := ((_card_array.size() + 1) / 2.0) - 1.0 # get index of middle card (or index between middle two cards)
 	var dist_from_center := curr_card_index - middle_card_index
 	card.z_index = floor(dist_from_center)
@@ -32,29 +32,30 @@ func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
 ## {OVERRIDE}
 const HAND_HIGHLIGHT_FACTOR = 1.1
 const HAND_HIGHLIGHT_Y_OFFSET = -(Global.CARD_SIZE.y * HAND_HIGHLIGHT_FACTOR/2)
-func _card_addition_unique(insert_position : int, card: Card2D) -> void:
+func _card_addition_unique(insert_position : int, card: CardUI) -> void:
 	if insert_position > _card_array.size() or insert_position < 0: #if card does not have a last_hand_position, set it to match the rightmost edge of the hand
 		card.last_hand_position = _card_array.size()
 	else:
 		card.last_hand_position = insert_position  #in case card is being inserted somewhere new
-	card.get_node("CardCollisionArea").input_event.connect(_on_card_input_event.bind(card))
-	card.get_node("CardCollisionArea").mouse_entered.connect(_on_card_input_event.bind(null, "mouse_entered", null, card))
-	card.get_node("CardCollisionArea").mouse_exited.connect(_on_card_input_event.bind(null, "mouse_exited", null, card))
+	card.gui_input.connect(_on_card_input_event.bind(card))
+	card.mouse_entered.connect(_on_card_input_event.bind("mouse_entered", card))
+	card.mouse_exited.connect(_on_card_input_event.bind("mouse_exited", card))
 	card.update_highlight_transform(HAND_HIGHLIGHT_FACTOR, HAND_HIGHLIGHT_Y_OFFSET)
+
 
 ## Updates last_hand_position, disconnect signals
 ## {OVERRIDE}
-func _card_removal_unique(card_array_position : int, card : Card2D):
+func _card_removal_unique(card_array_position : int, card : CardUI):
 	card.last_hand_position = card_array_position #special
-	card.get_node("CardCollisionArea").input_event.disconnect(_on_card_input_event)
-	card.get_node("CardCollisionArea").mouse_entered.disconnect(_on_card_input_event)
-	card.get_node("CardCollisionArea").mouse_exited.disconnect(_on_card_input_event)
+	card.gui_input.disconnect(_on_card_input_event)
+	card.mouse_entered.disconnect(_on_card_input_event)
+	card.mouse_exited.disconnect(_on_card_input_event)
 
 
 ## Performs the input event associated with the card which is highest up in the location
 ## {OVERRIDE}
 # card_selected signal gets emitted from here
-func _resolve_card_interaction_queue(card : Card2D, event) -> void:
+func _resolve_card_interaction_queue(card : CardUI, event) -> void:
 	#handle mouse-click on card
 	if event is InputEventMouseButton and event.pressed:
 		card_selected.emit(card)
@@ -74,6 +75,6 @@ func _resolve_card_interaction_queue(card : Card2D, event) -> void:
 
 ## Performs a red flash + shake if a card can't be interacted
 #TODO
-func fail_interaction(card : Card2D) -> void:
+func fail_interaction(card : CardUI) -> void:
 	print("failed to play ", card.debug_name)
 	pass

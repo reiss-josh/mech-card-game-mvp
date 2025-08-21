@@ -1,4 +1,4 @@
-extends Node
+extends Control
 class_name CardGame
 
 #card data
@@ -13,7 +13,7 @@ var deck_list_name : String = "basic_deck"
 @onready var play_pile : CardLocation = get_node("PlayPile")
 @onready var card_queue : CardLocation = get_node("CardQueue")
 @onready var draw_queue : CardLocation = get_node("DrawQueue")
-@onready var card_hud : CardHud = $CardHud
+@onready var card_hud : CardHud = get_node("CardHud")
 #for locking in
 var _prepared_lockin : bool = false
 var _discard_mode : bool = false
@@ -60,7 +60,7 @@ func _connect_child_signals():
 func draw_card_to_from(destination : CardLocation, source : CardLocation = draw_pile, quantity : int = 1) -> void:
 	for cards in quantity:
 		var drawn_card = source.draw_card()
-		if drawn_card is Card2D:
+		if drawn_card is CardUI:
 			destination.add_card(drawn_card)
 
 
@@ -77,7 +77,7 @@ func discard_card(hand_position : int = -1) -> void:
 
 
 ## Discards specifically requested [card] from the card [location] (defaults to hand)
-func discard_specific_card(card : Card2D, location : CardLocation = card_hand) -> void:
+func discard_specific_card(card : CardUI, location : CardLocation = card_hand) -> void:
 	if card_hand.card_array_size <= 0:
 		return
 	location.draw_specific_card(card)
@@ -111,7 +111,7 @@ func end_turn() -> void:
 
 
 ## Handles [card] being clicked
-func _on_card_selected(card : Card2D) -> void:
+func _on_card_selected(card : CardUI) -> void:
 	# check if we're in discard mode -- if so, try to discard, then see if we can end the turn.
 	if(_discard_mode):
 		discard_specific_card(card)
@@ -129,7 +129,7 @@ func _on_card_selected(card : Card2D) -> void:
 
 
 ## Checks if [card] can be legally played; returns true/false
-func _card_can_be_played(card : Card2D) -> bool:
+func _card_can_be_played(card : CardUI) -> bool:
 	var card_energy_cost = card.data.card_energy_cost
 	if((card_energy_cost <= PlayerVariables.curr_player_energy) and !card_queue.card_array_isfull):
 		return true
@@ -137,7 +137,7 @@ func _card_can_be_played(card : Card2D) -> bool:
 
 
 ## Plays [card] to the queue, and handles any interactions
-func _play_card(card : Card2D) -> void:
+func _play_card(card : CardUI) -> void:
 	card_hand.draw_specific_card(card)
 	if(card.data.card_type == "Draw"):
 		draw_queue.add_card(card)
@@ -180,7 +180,7 @@ func _undo_last_queue()-> void:
 		return
 	#gets the card out, and updates the HUD
 	var last_queued_card = card_queue.draw_card()
-	if(last_queued_card is not Card2D):
+	if(last_queued_card is not CardUI):
 		return
 	manage_card_play_cancel(last_queued_card, false)
 	if(last_queued_card.data.card_name == "Basic Energy"):
@@ -216,7 +216,7 @@ func _prepare_cancel_lockin(is_preparing : bool = true)-> void:
 
 ## Handles playing / cancelling of [card]
 ## Takes [is_playing] - {true} if playing, {false} if cancelling
-func manage_card_play_cancel(card : Card2D, is_playing: bool = true) -> void:
+func manage_card_play_cancel(card : CardUI, is_playing: bool = true) -> void:
 	var play_cancel_mult = int(is_playing)
 	if(play_cancel_mult == 0): play_cancel_mult = -1
 	
