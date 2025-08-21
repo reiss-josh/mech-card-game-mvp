@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 PlayerVariables="*res://_root/player_variables.gd"
 Global="*res://_root/global.gd"
 DeckListManager="*res://_root/deck_list_manager.gd"
+AudioManager="*res://_root/audio_manager.gd"
 
 [display]
 
@@ -64,7 +65,6 @@ TempDebug={
 
 [layer_names]
 
-2d_render/layer_5="Buttons"
 2d_physics/layer_1="card_target_selector"
 2d_physics/layer_2="card_drop_area"
 
