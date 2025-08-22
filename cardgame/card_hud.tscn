@@ -3,11 +3,12 @@
 [ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="1_er3yq"]
 [ext_resource type="Script" uid="uid://b3mdfspd235kg" path="res://cardgame/card_hud.gd" id="1_sc0sm"]
 
-[node name="CardHud" type="CanvasLayer" node_paths=PackedStringArray("LockInButton", "EnergyButton", "DrawButton", "ActionButtons")]
+[node name="CardHud" type="CanvasLayer" node_paths=PackedStringArray("LockInButton", "EnergyButton", "DrawButton", "MoveButton", "ActionButtons")]
 script = ExtResource("1_sc0sm")
 LockInButton = NodePath("QueueContainer/LockInContainer/LOCKIN")
 EnergyButton = NodePath("ActionButtons/GainEnergy")
 DrawButton = NodePath("ActionButtons/DrawCard")
+MoveButton = NodePath("ActionButtons/BasicMove")
 ActionButtons = NodePath("ActionButtons")
 
 [node name="ActionButtons" type="VBoxContainer" parent="."]
@@ -31,6 +32,15 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 theme = ExtResource("1_er3yq")
 text = "(1c) -> (1d)"
+
+[node name="BasicMove" type="Button" parent="ActionButtons"]
+visibility_layer = 16
+custom_minimum_size = Vector2(280, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource("1_er3yq")
+text = "(1c+1e) -> (1Move)"
 
 [node name="QueueContainer" type="VBoxContainer" parent="."]
 anchors_preset = 5

@@ -8,6 +8,7 @@ class_name CardHud
 @export var LockInButton : Button
 @export var EnergyButton : Button
 @export var DrawButton : Button
+@export var MoveButton : Button
 @export var ActionButtons : Container
 
 func _ready() -> void:

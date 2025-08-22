@@ -4,6 +4,7 @@ class_name CardGame
 #card data
 var energy_card_data = load("res://cardgame/cards/uniquecards/ui/ui_energy.tres")
 var draw_card_data = load("res://cardgame/cards/uniquecards/ui/ui_draw.tres")
+var move_card_data = load("res://cardgame/cards/uniquecards/ui/ui_move.tres")
 var deck_list_name : String = "basic_deck"
 var _clicks_this_turn = []
 #store our card locations
@@ -53,6 +54,7 @@ func _connect_child_signals():
 	card_hud.LockInButton.pressed.connect(_on_lockin_clicked)
 	card_hud.EnergyButton.pressed.connect(_on_gain_energy_clicked)
 	card_hud.DrawButton.pressed.connect(_on_draw_card_clicked)
+	card_hud.MoveButton.pressed.connect(_on_move_card_clicked)
 	play_pile.request_discard.connect(discard_specific_card.bind(play_pile))
 	play_pile.card_effect.connect(handle_card_effect)
 
@@ -166,6 +168,13 @@ func _on_draw_card_clicked() -> void:
 	if(card_queue.card_array_isfull):
 		return
 	_play_card(card_hand.create_card(draw_card_data))
+
+
+## Plays a basic move card when signalled by UI
+func _on_move_card_clicked() -> void:
+	if(card_queue.card_array_isfull):
+		return
+	_play_card(card_hand.create_card(move_card_data))
 
 
 ## Handls CardHud signalling that we've LOCKED IN
