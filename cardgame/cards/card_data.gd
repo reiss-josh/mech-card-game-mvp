@@ -27,6 +27,8 @@ class_name CardData
 @export var card_can_turn_before:bool		## Whether card lets player turn before activating in Action phase
 @export var card_can_turn_after:bool		## Whether card lets player turn after activating in Action phase
 #variables for attack/defend/move
-@export var card_pattern:String				## Pattern for attack/defense
+@export var card_aim_directions:Array[int]	## Card aim directions (fightstick notation), relative to player facing
+@export var card_hit_directions:Array[int]	## Card hit directions (fighstick notation), relative to selected aim direction
+@export var card_hit_width:int				## Width of card hit pattern
 
 @export_multiline var card_body:String
