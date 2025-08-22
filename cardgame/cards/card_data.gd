@@ -6,6 +6,7 @@ class_name CardData
 @export var card_type:String
 @export var card_subtype:String
 @export var card_value:int
+@export var card_cannot_undo:bool
 #variables for play area
 @export var card_is_persistent:bool			## Whether card can be played
 @export var card_is_clickable:bool			## Whether card can be clicked

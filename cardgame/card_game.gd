@@ -5,6 +5,7 @@ class_name CardGame
 var energy_card_data = load("res://cardgame/cards/uniquecards/ui_energy.tres")
 var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
 var deck_list_name : String = "basic_deck"
+var _clicks_this_turn = []
 #store our card locations
 @onready var card_hand : CardLocation = find_child("CardHand")
 @onready var draw_pile : CardLocation = find_child("DrawPile")
@@ -25,7 +26,7 @@ func _ready() -> void:
 	draw_pile.create_from_decklist(deck_list_name)
 	#fill up our hand to hand size
 	_connect_child_signals()
-	draw_card_to_from(card_hand, draw_pile, PlayerVariables.max_player_hand_size)
+	draw_card_to_from(card_hand, draw_pile, Global.PlayerVariables["max_hand_size"])
 	start_turn()
 
 
@@ -88,9 +89,10 @@ func discard_specific_card(card : Card2D, location : CardLocation = card_hand) -
 
 ## Makes hand visible, makes buttons visible, draws a card from the deck
 func start_turn() -> void:
-	PlayerVariables.curr_player_clicks = 0
+	Global.PlayerVariables["curr_clicks"] = 0
+	_clicks_this_turn = []
 	_prepare_cancel_lockin(false)
-	_update_player_values(0,PlayerVariables.max_player_clicks)
+	_update_player_values("Click",Global.PlayerVariables["max_clicks"])
 	card_queue.show_location()
 	draw_queue.show_location()
 	draw_card_to_from(card_hand, draw_pile)
@@ -100,7 +102,7 @@ func start_turn() -> void:
 ## Hides the hand, hides the buttons
 func end_turn() -> void:
 	# check if we need to discard -- if so, stop ending the turn, and toggle discard mode
-	if(card_hand.card_array_size > PlayerVariables.max_player_hand_size):
+	if(card_hand.card_array_size > Global.PlayerVariables["max_hand_size"]):
 		card_hand.show_location()
 		_discard_mode = true
 		return
@@ -118,7 +120,7 @@ func _on_card_selected(card : Card2D) -> void:
 	if(_discard_mode):
 		discard_specific_card(card)
 		await card.arrived
-		if(card_hand.card_array_size <= PlayerVariables.max_player_hand_size): #check if we can end the turn yet
+		if(card_hand.card_array_size <= Global.PlayerVariables["max_hand_size"]): #check if we can end the turn yet
 			_discard_mode = false
 			card_hand.hide_location()
 			end_turn()
@@ -133,7 +135,7 @@ func _on_card_selected(card : Card2D) -> void:
 ## Checks if [card] can be legally played; returns true/false
 func _card_can_be_played(card : Card2D) -> bool:
 	var card_energy_cost = card.data.card_energy_cost
-	if((card_energy_cost <= PlayerVariables.curr_player_energy) and !card_queue.card_array_isfull):
+	if((card_energy_cost <= Global.PlayerVariables["curr_energy"]) and !card_queue.card_array_isfull):
 		return true
 	return false
 
@@ -141,14 +143,13 @@ func _card_can_be_played(card : Card2D) -> bool:
 ## Plays [card] to the queue, and handles any interactions
 func _play_card(card : Card2D) -> void:
 	card_hand.draw_specific_card(card)
-	if(card.data.card_type == "Draw"):
-		draw_queue.add_card(card)
-	elif(card.data.card_is_persistent):
+	if(card.data.card_is_persistent):
 		play_pile.add_card(card)
 	else:
 		card_queue.add_card(card)
-	await card.arrived
 	manage_card_play_cancel(card, true)
+	await card.arrived
+	_clicks_this_turn.append(card)
 	if(card_queue.card_array_isfull): #check if the queue still has room after playing the new card
 		_prepare_cancel_lockin(true)
 
@@ -177,19 +178,31 @@ func _on_lockin_clicked() -> void:
 ## Removes most-recently-queued card
 ## Makes UI available, if it was previously hidden
 func _undo_last_queue()-> void:
-	#early return if we're about to do an index OOB
-	if(card_queue.card_array_size <= 0):
-		return
-	#gets the card out, and updates the HUD
-	var last_queued_card = card_queue.draw_card()
-	if(last_queued_card is not Card2D):
-		return
-	manage_card_play_cancel(last_queued_card, false)
-	if(last_queued_card.data.card_name == "Basic Energy"):
-		last_queued_card.free()
+	#early return if there isn't a _last_played_card, or if the _last_played_card was permanent
+	if(_clicks_this_turn.is_empty()): return
+	
+	#check if the card is in the queue or not, then get it
+	var last_click = _clicks_this_turn.back()
+	if (last_click is Card2D):
+		var card
+		if(last_click.data.card_cannot_undo):
+			return
+		elif(last_click.data.card_is_persistent):
+			card = play_pile.draw_card()
+		else:
+			card = card_queue.draw_card()
+		if(card.data.card_name.contains("UI ")):
+			manage_card_play_cancel(card, false)
+			card.free()
+		else:
+			#handle the card being undone
+			card_hand.add_card(card)
+			await card.arrived
+			manage_card_play_cancel(card, false)
 	else:
-		card_hand.add_card(last_queued_card)
-		await last_queued_card.arrived
+		#TODO: how do we handle undoing card clicks?
+		pass
+	_clicks_this_turn.pop_back()
 	
 	#if removing this card cancels our lockin,
 	if(_prepared_lockin):
@@ -221,36 +234,36 @@ func _prepare_cancel_lockin(is_preparing : bool = true)-> void:
 func manage_card_play_cancel(card : Card2D, is_playing: bool = true) -> void:
 	var play_cancel_mult = int(is_playing)
 	if(play_cancel_mult == 0): play_cancel_mult = -1
-	
-	_update_player_values(-card.data.card_energy_cost * play_cancel_mult, -play_cancel_mult)
-	match(card.data.card_type):
-		"Energy":
-			_update_player_values(card.data.card_value * play_cancel_mult, 0)
-		"Draw":
-			if(is_playing): draw_card_to_from(card_hand, draw_pile, card.data.card_value * play_cancel_mult)
-			else: discard_card()
+	#pay the click + energy cost
+	_update_player_values("Energy", -card.data.card_energy_cost * play_cancel_mult)
+	_update_player_values("Click", -play_cancel_mult)
+	if(card.data.card_type == "Event"):
+		match(card.data.card_subtype):
+			"Energy":
+				_update_player_values("Energy", card.data.card_value * play_cancel_mult)
+			"Draw":
+				if(is_playing): draw_card_to_from(card_hand, draw_pile, card.data.card_value * play_cancel_mult)
+				else: discard_card()
+			"Reload":
+				_update_player_values("Ammo", card.data.card_value * play_cancel_mult)
+			"Health":
+				_update_player_values("Health", card.data.card_value * play_cancel_mult)
 
 
 ## Updates player energy global by [energy_change] and click global by [click_change].
 ## Updates HUD to reflect changes.
-func _update_player_values(energy_change : int, click_change : int, ammo_change : int = 0) -> void:
+func _update_player_values(change_type : String, change_value : int) -> void:
+	if(change_type == "Click"): change_type = "Clicks"
+	var var_string = "curr_"+ change_type.to_lower()
+	#print(var_string, "\tchange by:", change_value, "\tcurr: ", Global.PlayerVariables[var_string])
 	#update globals
-	PlayerVariables.curr_player_energy += energy_change
-	PlayerVariables.curr_player_clicks += click_change
-	PlayerVariables.curr_player_ammo += ammo_change
+	Global.PlayerVariables[var_string] += change_value
 	#update the hud display
-	card_hud.energy_value = PlayerVariables.curr_player_energy #update the energy display
-	card_hud.click_value = PlayerVariables.curr_player_clicks #update the click display
-	#card_hud.ammo_value = PlayerVariables.curr_player_ammo
-	if(PlayerVariables.curr_player_clicks <= 0): #check if the queue still has room after playing the new card
+	card_hud.update_hud()
+	#card_hud.ammo_value = Global.PlayerVariablescurr_ammo
+	if(Global.PlayerVariables["curr_clicks"] <= 0): #check if the queue still has room after playing the new card
 		_prepare_cancel_lockin(true)
 
 
 func handle_card_effect(type : String, value : int):
-	match(type):
-		"Energy":
-			_update_player_values(value, 0, 0)
-		"Ammo":
-			_update_player_values(0,0,value)
-		"Click":
-			_update_player_values(0, value, 0)
+	_update_player_values(type, value)

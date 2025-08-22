@@ -3,10 +3,8 @@
 [ext_resource type="Theme" uid="uid://dabajwv45vt2w" path="res://themes/MyTheme.tres" id="1_er3yq"]
 [ext_resource type="Script" uid="uid://b3mdfspd235kg" path="res://cardgame/card_hud.gd" id="1_sc0sm"]
 
-[node name="CardHud" type="CanvasLayer" node_paths=PackedStringArray("_ClickValue", "_EnergyValue", "LockInButton", "EnergyButton", "DrawButton", "ActionButtons")]
+[node name="CardHud" type="CanvasLayer" node_paths=PackedStringArray("LockInButton", "EnergyButton", "DrawButton", "ActionButtons")]
 script = ExtResource("1_sc0sm")
-_ClickValue = NodePath("BLeftContainer/ClickContainer/ClickValue")
-_EnergyValue = NodePath("BLeftContainer/EnergyContainer/EnergyValue")
 LockInButton = NodePath("QueueContainer/LockInContainer/LOCKIN")
 EnergyButton = NodePath("ActionButtons/GainEnergy")
 DrawButton = NodePath("ActionButtons/DrawCard")
@@ -100,6 +98,38 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Energy:"
 
 [node name="EnergyValue" type="Label" parent="BLeftContainer/EnergyContainer"]
+layout_mode = 2
+theme = ExtResource("1_er3yq")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "0"
+
+[node name="HealthContainer" type="HBoxContainer" parent="BLeftContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="HealthTip" type="Label" parent="BLeftContainer/HealthContainer"]
+layout_mode = 2
+theme = ExtResource("1_er3yq")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Health:"
+
+[node name="HealthValue" type="Label" parent="BLeftContainer/HealthContainer"]
+layout_mode = 2
+theme = ExtResource("1_er3yq")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "0"
+
+[node name="AmmoContainer" type="HBoxContainer" parent="BLeftContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="AmmoTip" type="Label" parent="BLeftContainer/AmmoContainer"]
+layout_mode = 2
+theme = ExtResource("1_er3yq")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Ammo:"
+
+[node name="AmmoValue" type="Label" parent="BLeftContainer/AmmoContainer"]
 layout_mode = 2
 theme = ExtResource("1_er3yq")
 theme_override_colors/font_color = Color(1, 1, 1, 1)

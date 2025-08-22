@@ -12,7 +12,6 @@
 		"steady_shot",
 		"slipstream",
 		"slipstream",
-		"slipstream",
 		"quickdraw",
 		"quickdraw",
 		"beam_saber",
@@ -26,6 +25,9 @@
 		"sure_gamble",
 		"sure_gamble",
 		"auto_reload",
-		"auto_reload",
+		"big_bullets",
+		"big_bullets",
+		"ping",
+		"repair_kit",
 	],
 }

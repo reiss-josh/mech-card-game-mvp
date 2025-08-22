@@ -6,9 +6,10 @@
 script = ExtResource("1_0moqo")
 card_name = "Auto Reload"
 card_energy_cost = 5
-card_type = "Reload"
-card_subtype = "Load"
+card_type = "Resource"
+card_subtype = "Reload"
 card_value = 0
+card_cannot_undo = false
 card_is_persistent = true
 card_is_clickable = false
 card_is_repeat_clickable = false

@@ -17,6 +17,24 @@ func _self_setup() -> void:
 	_is_interactable_type = true
 
 
+## Adds [card] to top of location (or specified [insert_position]). returns true on succes
+func add_card(card : Card2D, insert_position: int = -1) -> bool:
+	if(self.card_array_isfull):
+		return false
+	card.reparent(self)
+	if (!card.last_hand_position < 0) and (card.last_hand_position < _card_array.size()):
+		insert_position = card.last_hand_position
+	if insert_position > _card_array.size() or insert_position < 0:
+		_card_array.append(card)
+		card.last_hand_position = _card_array.size()
+	else:
+		card.last_hand_position = insert_position  #in case card is being inserted somewhere new
+		_card_array.insert(insert_position,card) #insert the card into _card_array at position
+	_card_addition_unique(insert_position, card) #special for necessary signal hookups
+	_rearrange_cards()
+	return true
+
+
 ## Performs the actual rearrangement
 ## {OVERRIDE}
 const _CARD_BUFFER := Vector2(500,40) ## distance cards should be apart from eachother in hand (in pixels)
@@ -32,11 +50,7 @@ func _rearrange_helper(card : Card2D, curr_card_index : int) -> void:
 ## {OVERRIDE}
 const HAND_HIGHLIGHT_FACTOR = 1.1
 const HAND_HIGHLIGHT_Y_OFFSET = -(Global.CARD_SIZE.y * HAND_HIGHLIGHT_FACTOR/2)
-func _card_addition_unique(insert_position : int, card: Card2D) -> void:
-	if insert_position > _card_array.size() or insert_position < 0: #if card does not have a last_hand_position, set it to match the rightmost edge of the hand
-		card.last_hand_position = _card_array.size()
-	else:
-		card.last_hand_position = insert_position  #in case card is being inserted somewhere new
+func _card_addition_unique(_insert_position : int, card: Card2D) -> void:
 	card.get_node("CardCollisionArea").input_event.connect(_on_card_input_event.bind(card))
 	card.get_node("CardCollisionArea").mouse_entered.connect(_on_card_input_event.bind(null, "mouse_entered", null, card))
 	card.get_node("CardCollisionArea").mouse_exited.connect(_on_card_input_event.bind(null, "mouse_exited", null, card))

@@ -72,8 +72,8 @@ func move_and_scale(target_position : Vector2, target_scale_factor : float = -1.
 
 ## Highlights the card if it isn't already highlighted
 func start_highlight() -> void:
-	if(need_highlight == true):
-		return
+	if(need_move == true): return
+	if(need_highlight == true): return
 	#store variables
 	need_highlight = true
 	_last_z_index = z_index
@@ -90,6 +90,8 @@ func start_highlight() -> void:
 
 ## Ends highlight for the card
 func end_highlight() -> void:
+	if(need_move == true): return
+	if(need_highlight == false): return
 	#store variables
 	need_highlight = false
 	#reset visuals
@@ -142,7 +144,7 @@ func handle_play_card() -> void:
 	#set the click button visible, if necessary
 	if(data.card_is_clickable): _card_hud_elts_dict["ClickButton"].visible = true
 	#prep the card if it loads on play
-	if(data.card_subtype == "Load"): prep_load_card()
+	if(data.card_is_loadable): prep_load_card()
 
 
 ## Handles removing card from the PlayArea
@@ -157,7 +159,7 @@ func _on_card_clicked() -> void:
 	if(tapped == true): return
 	# do the click stuff
 	card_effect.emit("Click",-1)
-	if(data.card_subtype == "Load"):
+	if(data.card_is_loadable):
 		if(data.card_loads_on_click): load_unload_card_inc(true)
 		elif(data.card_unloads_on_click): load_unload_card_inc(false)
 	# set card tapped if necessary

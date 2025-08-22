@@ -6,8 +6,10 @@
 script = ExtResource("1_7s71i")
 card_name = "Reposition"
 card_energy_cost = 1
-card_type = "Move"
+card_type = "Action"
+card_subtype = "Move"
 card_value = 1
+card_cannot_undo = false
 card_is_persistent = false
 card_is_clickable = false
 card_is_repeat_clickable = false

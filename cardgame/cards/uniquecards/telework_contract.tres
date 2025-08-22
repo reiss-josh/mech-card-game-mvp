@@ -6,9 +6,10 @@
 script = ExtResource("1_re6eu")
 card_name = "Telework Contract"
 card_energy_cost = 1
-card_type = "Energy"
-card_subtype = "Load"
+card_type = "Resource"
+card_subtype = "Energy"
 card_value = 0
+card_cannot_undo = false
 card_is_persistent = true
 card_is_clickable = true
 card_is_repeat_clickable = false

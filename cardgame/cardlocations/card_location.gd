@@ -133,6 +133,7 @@ func _card_removal_unique(_card_array_position: int, _card : Card2D) -> void:
 func _rearrange_cards() -> void:
 	self.is_interactable = false
 	for curr_card_index in _card_array.size():
+		_card_array[curr_card_index].end_highlight()
 		_rearrange_helper(_card_array[curr_card_index], curr_card_index)
 	self.is_interactable = self._is_interactable_type
 
