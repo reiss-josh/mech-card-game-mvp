@@ -1,14 +1,14 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dvgr3lo671clv"]
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://dpw6023dwwemj"]
 
-[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_4slyn"]
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_0s24p"]
 
 [resource]
-script = ExtResource("1_4slyn")
-card_name = "Ping"
+script = ExtResource("1_0s24p")
+card_name = "Heavy Shield"
 card_energy_cost = 2
 card_type = "Action"
-card_subtype = "Ping"
-card_value = 0
+card_subtype = "Defend"
+card_value = 5
 card_cannot_undo = false
 card_is_persistent = false
 card_is_clickable = false
@@ -26,6 +26,8 @@ card_load_type = ""
 card_discards_when_empty = false
 card_can_turn_before = false
 card_can_turn_after = false
-card_pattern = ""
-card_body = "Action -> Pings all tiles within range {5}"
+card_aim_directions = Array[int]([2, 4, 6])
+card_hit_directions = Array[int]([2])
+card_hit_width = 1
+card_body = "Action -> Defend front or sides. Blocks up to {5} damage."
 metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

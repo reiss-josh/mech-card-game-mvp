@@ -2,8 +2,8 @@ extends Node
 class_name CardGame
 
 #card data
-var energy_card_data = load("res://cardgame/cards/uniquecards/ui_energy.tres")
-var draw_card_data = load("res://cardgame/cards/uniquecards/ui_draw.tres")
+var energy_card_data = load("res://cardgame/cards/uniquecards/ui/ui_energy.tres")
+var draw_card_data = load("res://cardgame/cards/uniquecards/ui/ui_draw.tres")
 var deck_list_name : String = "basic_deck"
 var _clicks_this_turn = []
 #store our card locations

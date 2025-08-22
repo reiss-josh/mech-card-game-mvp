@@ -1,14 +1,14 @@
-[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://bs7sdbr3edlfg"]
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://c1bk10v0s8r4r"]
 
-[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_o01sa"]
+[ext_resource type="Script" uid="uid://cbtdfdmg7jvmd" path="res://cardgame/cards/card_data.gd" id="1_p4bfm"]
 
 [resource]
-script = ExtResource("1_o01sa")
-card_name = "Steady Shot"
-card_energy_cost = 1
+script = ExtResource("1_p4bfm")
+card_name = "Beam Saber"
+card_energy_cost = 3
 card_type = "Action"
 card_subtype = "Attack"
-card_value = 2
+card_value = 5
 card_cannot_undo = false
 card_is_persistent = false
 card_is_clickable = false
@@ -26,6 +26,8 @@ card_load_type = ""
 card_discards_when_empty = false
 card_can_turn_before = false
 card_can_turn_after = false
-card_pattern = "Forward-1"
-card_body = "Play -> Fire in a straight line. Deals {2} damage."
+card_aim_directions = Array[int]([2])
+card_hit_directions = Array[int]([2])
+card_hit_width = 3
+card_body = "Action -> Melee attack. Width{3}, Range {1xAGL}. Deals {5} damage."
 metadata/_custom_type_script = "uid://cbtdfdmg7jvmd"

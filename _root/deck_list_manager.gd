@@ -13,6 +13,7 @@ func load_deck_json(deck_filename : String) -> Array[CardData]:
 	#try loading the deck
 	#print("loading deck at " + deck_path + "...")
 	if not FileAccess.file_exists(deck_path):
+		print("deck path not found!!")
 		return card_array
 
 	#do the actual file access
@@ -34,6 +35,7 @@ func load_deck_json(deck_filename : String) -> Array[CardData]:
 	for card_name in data.get("cards"):
 		var curr_card_data_path : String = card_data_path+card_name+".tres"
 		var curr_card_data : CardData = load(curr_card_data_path)
+		if curr_card_data == null: print("failed to load card with name: ", card_name)
 		#print(card_name, "\t", curr_card_data_path, "\t", curr_card_data.card_name)
 		card_array.append(curr_card_data)
 	return card_array
